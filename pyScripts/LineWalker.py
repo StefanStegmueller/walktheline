@@ -102,7 +102,8 @@ class LineWalker:
 
     def start_new_line_worker(self):
         print "Starting new worker"
-        line_detection_thread = Thread(target=self.line_analyzer.analyze_pipeline())
+        line_detection_thread = Thread(target=self.line_analyzer.analyze_pipeline)
+	line_detection_thread.daemon = True
         line_detection_thread.start()
 
     def __init__(self):
