@@ -57,11 +57,11 @@ class LineWalker:
 
     @staticmethod
     def main(self):
-        """This is the main loop of the WATCHDOG software, iterating without specified end"""
+        """This is the main loop of the LineWalker software, iterating without specified end"""
         power = 200  # power level with which the motors run, if the run forward
         distance_on_collision = 1.5  # seconds to drive backwards on touch collision
         speed_on_collision = power/2  # power level with which the motors run backwards on touch collision
-        amount_of_pattern_detection_threads = 1
+        current_thread_count = 2
         speed_on_turn = speed_on_collision + speed_on_collision/2
 
         self.on_hold = False
@@ -70,6 +70,8 @@ class LineWalker:
 
         robot = self.robot
 
+        print 'initialization complete'
+        
         #main loop
         while True:
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
@@ -80,16 +82,17 @@ class LineWalker:
                     robot.set_both_motor_powers(power)
 
                 # One additional active thread is the main thread
-                if threading.active_count() < amount_of_pattern_detection_threads + 1: #start new line detection thread if broken
+                if threading.active_count() < current_thread_count: #start new line detection thread if broken
                     self.start_new_line_worker()
-
+                                    
+                print 'start correcting deviation'
                 self.robot.correct_deviation(self.line_analyzer.deviation, self.camera_x_resolution, power)
 
                 time.sleep(0.01)  # sleep for 10ms
 
     def start_new_line_worker(self):
         print "Starting new worker"
-        line_detection_thread = Thread(target=self.line_analyzer.analyze())
+        line_detection_thread = Thread(target=self.line_analyzer.analyze_pipeline())
         line_detection_thread.start()
 
     def __init__(self):

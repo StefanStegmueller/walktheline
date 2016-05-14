@@ -10,11 +10,9 @@ class LineAnalyzer:
     def take_a_photo(self):
         """This method takes a picture from the piCam,
         thread-lock has to be manually released after calling this method"""
-        # print "Fall asleep"
+        print "Analyze-Thread: Fall asleep"
         time.sleep(0.2)
-        # print "Wake up"
-        # Locking down the critical section as of PiCamera only being accessible once
-        self.lock.acquire()
+        print "Analyze-Thread: Wake up"
         # Get the picture (low resolution, so it should be quite fast)
         # Here also other parameters can be specified (e.g.: rotate the image)
         with picamera.PiCamera() as camera:
@@ -87,7 +85,11 @@ class LineAnalyzer:
         return middle
 
     def analyze_pipeline(self):
+        print 'Analyze-Thread: threadcount ', threading.active_count()
+        # Locking down the critical section as of PiCamera only being accessible once
+        self.lock.acquire()
         image = self.take_a_photo()
+        self.lock.release()
 
         #read greyscale image
         img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -110,13 +112,13 @@ class LineAnalyzer:
 
         contours, hierarchy = self.find_contours(edged)
 
-        middle = self.find_middle(roi, contours)
+        middle = self.find_middle(roi, contours)       
 
         #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
         if(middle != False):
             cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
-        self.deviation = middle - (width / 2)
-        self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
+            self.deviation = middle - (width / 2)
+            self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
         return
 
 
