@@ -36,7 +36,7 @@ class LineWalker:
     """This class represents the whole software architecture with the main loop"""
 
     def read_settings(self):
-        with open('./settings') as json_data_file:
+        with open('settings') as json_data_file:
             data = json.load(json_data_file)
         return data
 
@@ -94,7 +94,7 @@ class LineWalker:
                 print 'start correcting deviation'
                 self.robot.correct_deviation(self.line_analyzer.deviation,
                                              self.settings["robot"]["correction_tolerance"],
-                                             self.camera_x_resolution,
+                                             self.settings["camera"]["camera_x_resolution"],
                                              power)
                 BrickPiUpdateValues()
 
@@ -114,7 +114,7 @@ class LineWalker:
         self.line_analyzer = LineAnalyzer.LineAnalyzer(self.settings["camera"]["camera_x_resolution"],
                                                        self.settings["camera"]["camera_y_resolution"],
                                                        self.settings["camera"]["pic_format"],
-                                                       self.settings["camera"]["pic_analysis_thread_sleep_seconds"])
+                                                       self.settings["threads"]["pic_analysis_thread_sleep_seconds"])
         self.already_rotated_tower = False
         self.initialize_robot()
         self.main(self)

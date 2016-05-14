@@ -1,0 +1,15 @@
+{
+    "robot":{
+        "standard_motor_power":200,
+        "correction_tolerance":20
+    },
+    "camera":{
+        "camera_x_resolution":640,
+        "camera_y_resolution":480,
+        "pic_format":"bmp"
+    },
+    "threads":{
+        "main_thread_sleep_seconds":0.01,
+        "pic_analysis_thread_sleep_seconds":0.2
+    }
+}
