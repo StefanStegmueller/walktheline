@@ -29,14 +29,6 @@ RUN pip install web.py
 RUN git clone https://github.com/DexterInd/BrickPi_Python.git
 
 
-COPY config.txt /boot/
-COPY ir_receiver_check.py /BrickPi_Python/Sensor_Examples/ 
-COPY BrickPi.py /BrickPi_Python/Sensor_Examples/
-
-# Brickpi LED test file
-COPY docker-LED-test/*.py /BrickPi_Python/Sensor_Examples/
-
-
 # Define working directory
 WORKDIR /data
 VOLUME /data
