@@ -3,28 +3,25 @@ import cv2
 
 class LineAnalyzer:
 
-    def __init__(self):
-        return
-
-    def turn_img(img):
+    def turn_img(self, img):
         width = img.shape[0]
         height = img.shape[1] #height and width are switched
         M = cv2.getRotationMatrix2D((height / 2, width / 2), 180, 1)
         turned_img = cv2.warpAffine(img, M, (height, width))
         return turned_img
 
-    def print_image(img):
+    def print_image(self, img):
         cv2.imshow('img', img)
         cv2.waitKey(0)
         return
 
-    def crop_roi(img, start_x, start_y, width, height):
-        turned_img = turn_img(img)
+    def crop_roi(self, img, start_x, start_y, width, height):
+        turned_img = self.turn_img(img)
         resized_turned_img = turned_img[start_y:height, start_x:width]
-        roi = turn_img(resized_turned_img)
+        roi = self.turn_img(resized_turned_img)
         return roi
 
-    def main(self):
+    def analyze(self):
         imgSource = '2016-05-14-04.08.10.bmp'
 
         img = cv2.imread(imgSource, 0)
@@ -42,7 +39,16 @@ class LineAnalyzer:
         self.print_image(roi)
         return
 
-    if __name__ == "__main__":
-        main()
+
+    def __init__(self):
+        self.analyze()
+        return
+
+
+
+#######################################################
+# END OF FUNCTION DEFINITIONS /// BEGINNING OF MAIN ###
+#######################################################
+lineAnalyzer = LineAnalyzer()
 
 
