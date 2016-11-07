@@ -28,7 +28,7 @@ class LineAnalyzer:
         return contours, hierarchy
 
     def analyze(self):
-        imgSource = '2016-05-14-04.08.10.bmp'
+        imgSource = '2016-05-14-04.08.34.bmp'
 
         img = cv2.imread(imgSource, 0) #reads greyscale image
 
@@ -41,6 +41,10 @@ class LineAnalyzer:
         new_h = height - (height * 0.9)
 
         roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
+
+        self.print_image(roi)
+
+        cv2.waitKey(0)
 
         gray = cv2.bilateralFilter(roi, 11, 17, 17)
         edged = cv2.Canny(gray, 30, 200)
