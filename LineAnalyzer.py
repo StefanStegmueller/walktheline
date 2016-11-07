@@ -3,7 +3,7 @@ import cv2
 
 class LineAnalyzer:
 
-    #turns image 180 degrees
+    #turn image 180 degrees
     def turn_img(self, img):
         width = img.shape[0]
         height = img.shape[1] #height and width are switched
@@ -22,15 +22,24 @@ class LineAnalyzer:
         roi = self.turn_img(resized_turned_img)
         return roi
 
-    def find_conturs(self, roi):
+    def find_contours(self, roi):
         ret, thresh = cv2.threshold(roi, 127, 255, 0)
         contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         return contours, hierarchy
 
+    def draw_rectangles_on_line(self, roi, contours):
+        for cont in contours:
+            moment = cv2.moments(cont)
+            if(moment['m00'] > 0):
+                x, y, w, h = cv2.boundingRect(cont)
+                cv2.rectangle(roi, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        return
+
     def analyze(self):
         imgSource = '2016-05-14-04.08.34.bmp'
 
-        img = cv2.imread(imgSource, 0) #reads greyscale image
+        #read greyscale image
+        img = cv2.imread(imgSource, 0)
 
         height = img.shape[0]
         width = img.shape[1]
@@ -40,22 +49,18 @@ class LineAnalyzer:
         new_w = width
         new_h = height - (height * 0.9)
 
+        #crop ROI out of given image
         roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
-
-        self.print_image(roi)
-
-        cv2.waitKey(0)
-
+        #smooth image
         gray = cv2.bilateralFilter(roi, 11, 17, 17)
+        #detect edges
         edged = cv2.Canny(gray, 30, 200)
 
+        contours, hierarchy = self.find_contours(edged)
 
-        self.print_image(edged)
-        cv2.waitKey(0)
+        self.draw_rectangles_on_line(roi, contours)
 
-        contours, hierarchy = self.find_conturs(edged)
-
-        cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
+        #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
 
         self.print_image(roi)
         return
