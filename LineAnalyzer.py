@@ -27,16 +27,40 @@ class LineAnalyzer:
         contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         return contours, hierarchy
 
-    def draw_rectangles_on_line(self, roi, contours):
-        for cont in contours:
-            moment = cv2.moments(cont)
-            if(moment['m00'] > 0):
-                x, y, w, h = cv2.boundingRect(cont)
-                cv2.rectangle(roi, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    def draw_contour(self, roi, contour):
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(roi, (x, y), (x + w, y + h), (255, 0, 0), 1)
         return
 
+    def parse_xcoordinates(self, contour):
+        x_coordinates = []
+        for value in contour:
+            x_coordinates.append(value[0][0])
+        return x_coordinates
+
+    def calc_borderaverage (self, contour):
+        x_coordinates = self.parse_xcoordinates(contour)
+        border = sum(x_coordinates) / len(x_coordinates)
+        print border
+        return border
+
+    def find_middle(self, roi, contours):
+        borders = []
+        for contour in contours:
+            moment = cv2.moments(contour)
+            if(moment['m00'] > 0):
+                self.draw_contour(roi, contour)
+                borders.append(self.calc_borderaverage(contour))
+        if(len(borders) == 2):
+            middle = min(borders) + (abs(borders[0] - borders[1])/2)
+        else:
+            print 'More or less than two borders detected'
+        return middle
+
+
+
     def analyze(self):
-        imgSource = '2016-05-14-04.08.34.bmp'
+        imgSource = '2016-05-14-04.19.26.572015.bmp'
 
         #read greyscale image
         img = cv2.imread(imgSource, 0)
@@ -58,9 +82,11 @@ class LineAnalyzer:
 
         contours, hierarchy = self.find_contours(edged)
 
-        self.draw_rectangles_on_line(roi, contours)
+        middle = self.find_middle(roi, contours)
 
         #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
+
+        cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
 
         self.print_image(roi)
         return
