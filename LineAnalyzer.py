@@ -54,13 +54,14 @@ class LineAnalyzer:
         if(len(borders) == 2):
             middle = min(borders) + (abs(borders[0] - borders[1])/2)
         else:
-            print 'More or less than two borders detected'
+            print 'More or less than two borders detected: ' + len(borders).__str__() + ' borders'
+            return False
         return middle
 
 
 
     def analyze(self):
-        imgSource = '2016-05-14-04.19.26.572015.bmp'
+        imgSource = '2016-05-14-04.19.28.312395.bmp'
 
         #read greyscale image
         img = cv2.imread(imgSource, 0)
@@ -85,10 +86,9 @@ class LineAnalyzer:
         middle = self.find_middle(roi, contours)
 
         #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
-
-        cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
-
-        self.print_image(roi)
+        if(middle != False):
+            cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
+            self.print_image(roi)
         return
 
 
