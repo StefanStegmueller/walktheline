@@ -1,5 +1,6 @@
 import numpy
 import cv2
+import os
 
 class LineAnalyzer:
 
@@ -61,34 +62,45 @@ class LineAnalyzer:
 
 
     def analyze(self):
-        imgSource = '2016-05-14-04.19.28.312395.bmp'
+        directory = 'D:\Entwickel\walktheline\Kamera'
+        success = 0
+        total = 0
 
-        #read greyscale image
-        img = cv2.imread(imgSource, 0)
+        for filename in os.listdir(directory):
 
-        height = img.shape[0]
-        width = img.shape[1]
+            head, tail = os.path.split(filename)
+            imgSource = 'Kamera/' + tail
 
-        start_x = 0
-        start_y = height - (height * 0.99)
-        new_w = width
-        new_h = height - (height * 0.9)
+            #read greyscale image
+            img = cv2.imread(imgSource, 0)
 
-        #crop ROI out of given image
-        roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
-        #smooth image
-        gray = cv2.bilateralFilter(roi, 11, 17, 17)
-        #detect edges
-        edged = cv2.Canny(gray, 30, 200)
+            height = img.shape[0]
+            width = img.shape[1]
 
-        contours, hierarchy = self.find_contours(edged)
+            start_x = 0
+            start_y = height - (height * 0.99)
+            new_w = width
+            new_h = height - (height * 0.9)
 
-        middle = self.find_middle(roi, contours)
+            #crop ROI out of given image
+            roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
+            #smooth image
+            gray = cv2.bilateralFilter(roi, 11, 17, 17)
+            #detect edges
+            edged = cv2.Canny(gray, 30, 200)
 
-        #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
-        if(middle != False):
-            cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
-            self.print_image(roi)
+            contours, hierarchy = self.find_contours(edged)
+
+            middle = self.find_middle(roi, contours)
+
+            #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
+            if(middle != False):
+                cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
+                #self.print_image(roi)
+                success = success + 1
+            total = total + 1
+        failed = total - success
+        print 'result: total(' + str(total) + ') success(' + str(success) + ') failed(' + str(failed) + ')'
         return
 
 
