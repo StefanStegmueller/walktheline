@@ -85,9 +85,10 @@ class LineAnalyzer:
             #crop ROI out of given image
             roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
             #smooth image
-            gray = cv2.bilateralFilter(roi, 11, 17, 17)
+            blur = cv2.bilateralFilter(roi, 11, 17, 17)
+
             #detect edges
-            edged = cv2.Canny(gray, 30, 200)
+            edged = cv2.Canny(blur, 30, 200)
 
             contours, hierarchy = self.find_contours(edged)
 
