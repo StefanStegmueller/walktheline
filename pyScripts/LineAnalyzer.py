@@ -116,6 +116,7 @@ class LineAnalyzer:
         if(middle != False):
             cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
         self.deviation = middle - (width / 2)
+        self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
         return
 
 

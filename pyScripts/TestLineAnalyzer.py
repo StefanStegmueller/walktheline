@@ -102,6 +102,8 @@ class LineAnalyzer:
             total = total + 1
         failed = total - success
         print 'result: total(' + str(total) + ') success(' + str(success) + ') failed(' + str(failed) + ')'
+        if (middle != False):
+            cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
         return
 
 
