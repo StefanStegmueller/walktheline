@@ -68,14 +68,16 @@ class Robot:
             time.sleep(0.1)
 
     def correct_deviation(self, deviation, standart_power):
-        tolerance = 10
+        tolerance = 20
         correction_factor = 1
         if(deviation > 0 + tolerance ):
-            power = self.get_motor_power("right")
-            self.set_motor_power("right",power - abs(deviation) * correction_factor)
+            curve_power = abs(deviation) * correction_factor
+            self.set_motor_power("right",curve_power)
+            self.set_motor_power("left", standart_power - curve_power)
         elif(deviation < 0 - tolerance):
-            power = self.get_motor_power("left")
-            self.set_motor_power("left", abs(deviation) * correction_factor)
+            curve_power = abs(deviation) * correction_factor
+            self.set_motor_power("left", curve_power)
+            self.set_motor_power("right", standart_power - curve_power)
         else:
             self.set_both_motor_powers(standart_power)
 
