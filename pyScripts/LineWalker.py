@@ -83,7 +83,7 @@ class LineWalker:
                 if threading.active_count() < amount_of_pattern_detection_threads + 1: #start new line detection thread if broken
                     self.start_new_line_worker()
 
-                self.robot.correct_deviation(self.line_analyzer.deviation, power)
+                self.robot.correct_deviation(self.line_analyzer.deviation, self.camera_x_resolution, power)
 
                 time.sleep(0.01)  # sleep for 10ms
 
@@ -95,9 +95,11 @@ class LineWalker:
     def __init__(self):
         """This method initializes and starts the whole software"""
         # Start worker processes for pattern detection
+        self.camera_x_resolution = 640
+        self.camera_y_resolution = 480
         self.initialize_brick_pi()
         self.robot = Robot.Robot()
-        self.line_analyzer = LineAnalyzer.LineAnalyzer(640, 480)
+        self.line_analyzer = LineAnalyzer.LineAnalyzer(self.camera_x_resolution, self.camera_y_resolution)
         self.already_rotated_tower = False
         self.initialize_robot()
         self.main(self)
