@@ -49,8 +49,8 @@ class LineWalker:
         # There's often a long wait for setup with the EV3 sensors.  Up to 5 seconds.
 
     def initialize_robot(self):
-        left_motor = Motor(PORT_B, "right")
-        right_motor = Motor(PORT_C, "left")
+        right_motor = Motor(PORT_B, "right")
+        left_motor = Motor(PORT_C, "left")
         self.robot.set_motors([left_motor, right_motor])
 
         self.rotating_camera_tower = RotationTower(PORT_A, "rotating_camera_tower", self.robot)
