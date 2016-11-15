@@ -73,11 +73,11 @@ class Robot:
         percent_pic = 100 - (abs(deviation) * 100) / middle_pic
         curve_power = ((standart_power / 2) * percent_pic) / 100
         if(deviation > 0 + tolerance ):
-            print 'right'
+            print 'drive right'
             self.set_motor_power("right",curve_power)
             self.set_motor_power("left", standart_power - curve_power)
         elif(deviation < 0 - tolerance):
-            print 'left'
+            print 'drive left'
             self.set_motor_power("left", curve_power)
             self.set_motor_power("right", standart_power - curve_power)
         else:
