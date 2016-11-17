@@ -24,6 +24,7 @@ import Robot
 import os
 from threading import Thread
 import threading
+import json
 
 # from BrickPi.BrickPi import PORT_C, PORT_B, PORT_3, PORT_2, BrickPiSetup, BrickPiSetupSensors
 
@@ -33,6 +34,11 @@ STATE_FILE = os.path.join(APP_ROOT, 'web/watchdog-status.txt')
 
 class LineWalker:
     """This class represents the whole software architecture with the main loop"""
+
+    def read_settings(self):
+        with open('./settings') as json_data_file:
+            data = json.load(json_data_file)
+        return data
 
     @staticmethod
     def initialize_brick_pi():
@@ -58,7 +64,7 @@ class LineWalker:
     @staticmethod
     def main(self):
         """This is the main loop of the LineWalker software, iterating without specified end"""
-        power = 200  # power level with which the motors run, if the run forward
+        power = self.settings["robot"]["standard_motor_power"]  # power level with which the motors run, if the run forward
         distance_on_collision = 1.5  # seconds to drive backwards on touch collision
         speed_on_collision = power/2  # power level with which the motors run backwards on touch collision
         current_thread_count = 2
@@ -86,9 +92,13 @@ class LineWalker:
                     self.start_new_line_worker()
                                     
                 print 'start correcting deviation'
-                self.robot.correct_deviation(self.line_analyzer.deviation, self.camera_x_resolution, power)
+                self.robot.correct_deviation(self.line_analyzer.deviation,
+                                             self.settings["robot"]["steering_tolerance"],
+                                             self.camera_x_resolution,
+                                             power)
+                BrickPiUpdateValues()
 
-                time.sleep(0.01)  # sleep for 10ms
+                time.sleep(self.settings["threads"]["main_thread_sleep_seconds"])  # sleep
 
     def start_new_line_worker(self):
         print "Starting new worker"
@@ -98,11 +108,13 @@ class LineWalker:
     def __init__(self):
         """This method initializes and starts the whole software"""
         # Start worker processes for pattern detection
-        self.camera_x_resolution = 640
-        self.camera_y_resolution = 480
+        self.settings = self.read_settings()
         self.initialize_brick_pi()
         self.robot = Robot.Robot()
-        self.line_analyzer = LineAnalyzer.LineAnalyzer(self.camera_x_resolution, self.camera_y_resolution)
+        self.line_analyzer = LineAnalyzer.LineAnalyzer(self.settings["camera"]["camera_x_resolution"],
+                                                       self.settings["camera"]["camera_y_resolution"],
+                                                       self.settings["camera"]["pic_format"],
+                                                       self.settings["camera"]["pic_analysis_thread_sleep_seconds"])
         self.already_rotated_tower = False
         self.initialize_robot()
         self.main(self)

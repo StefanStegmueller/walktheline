@@ -11,7 +11,7 @@ class LineAnalyzer:
         """This method takes a picture from the piCam,
         thread-lock has to be manually released after calling this method"""
         print "Analyze-Thread: Fall asleep"
-        time.sleep(0.2)
+        time.sleep(self.thread_sleep_seconds)
         print "Analyze-Thread: Wake up"
         # Get the picture (low resolution, so it should be quite fast)
         # Here also other parameters can be specified (e.g.: rotate the image)
@@ -20,7 +20,7 @@ class LineAnalyzer:
 
             # Create a memory stream so pictures don't need to be saved in a file
             self.stream = io.BytesIO()
-            camera.capture(self.stream, format='bmp')
+            camera.capture(self.stream, format=self.pic_format)
             # Convert the picture into a numpy array
             buffer = numpy.fromstring(self.stream.getvalue(), dtype=numpy.uint8)
 
@@ -122,11 +122,13 @@ class LineAnalyzer:
         return
 
 
-    def __init__(self, camera_x_resolution, camera_y_resolution):
+    def __init__(self, camera_x_resolution, camera_y_resolution, pic_format, thread_sleep_seoncds):
         self.lock = threading.Lock()
         self.deviation = 0
         self.camera_x_resolution = camera_x_resolution
         self.camera_y_resolution = camera_y_resolution
+        self.pic_format = pic_format
+        self.thread_sleep_seconds = thread_sleep_seoncds
         return
 
 

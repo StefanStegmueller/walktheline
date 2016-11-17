@@ -67,8 +67,7 @@ class Robot:
             BrickPiUpdateValues()
             time.sleep(0.1)
 
-    def correct_deviation(self, deviation, width, standart_power):
-        tolerance = 20
+    def correct_deviation(self, deviation, tolerance, width, standart_power):
         middle_pic = width / 2
         percent_pic = 100 - (abs(deviation) * 100) / middle_pic
         curve_power = ((standart_power / 2) * percent_pic) / 100
