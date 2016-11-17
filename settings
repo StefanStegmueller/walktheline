@@ -1,7 +1,7 @@
 {
     "robot":{
         "standard_motor_power":"200",
-        "steering_tolerance":"20"
+        "correction_tolerance":"20"
     },
     "camera":{
         "camera_x_resolution":"640",

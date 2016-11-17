@@ -93,7 +93,7 @@ class LineWalker:
                                     
                 print 'start correcting deviation'
                 self.robot.correct_deviation(self.line_analyzer.deviation,
-                                             self.settings["robot"]["steering_tolerance"],
+                                             self.settings["robot"]["correction_tolerance"],
                                              self.camera_x_resolution,
                                              power)
                 BrickPiUpdateValues()
