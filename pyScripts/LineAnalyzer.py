@@ -85,41 +85,42 @@ class LineAnalyzer:
         return middle
 
     def analyze_pipeline(self):
-        print 'Analyze-Thread: threadcount ', threading.active_count()
-        # Locking down the critical section as of PiCamera only being accessible once
-        self.lock.acquire()
-        image = self.take_a_photo()
-        self.lock.release()
+        while(True):
+            print 'Analyze-Thread: threadcount ', threading.active_count()
+            # Locking down the critical section as of PiCamera only being accessible once
+            self.lock.acquire()
+            image = self.take_a_photo()
+            self.lock.release()
 
-        #read greyscale image
-        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            #read greyscale image
+            img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        height = img.shape[0]
-        width = img.shape[1]
+            height = img.shape[0]
+            width = img.shape[1]
 
-        start_x = 0
-        start_y = height - (height * 0.99)
-        new_w = width
-        new_h = height - (height * 0.9)
+            start_x = 0
+            start_y = height - (height * 0.99)
+            new_w = width
+            new_h = height - (height * 0.9)
 
-        #crop ROI out of given image
-        roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
-        #smooth image
-        blur = cv2.bilateralFilter(roi, 11, 17, 17)
+            #crop ROI out of given image
+            roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
+            #smooth image
+            blur = cv2.bilateralFilter(roi, 11, 17, 17)
 
-        #detect edges
-        edged = cv2.Canny(blur, 30, 200)
+            #detect edges
+            edged = cv2.Canny(blur, 30, 200)
 
-        contours, hierarchy = self.find_contours(edged)
+            contours, hierarchy = self.find_contours(edged)
 
-        middle = self.find_middle(roi, contours)       
+            middle = self.find_middle(roi, contours)
 
-        #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
-        if(middle != False):
-            cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
-            self.deviation = middle - (width / 2)
-            self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
-        return
+            #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
+            if(middle != False):
+                cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
+                self.deviation = middle - (width / 2)
+                self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
+
 
 
     def __init__(self, camera_x_resolution, camera_y_resolution, pic_format, thread_sleep_seoncds):
