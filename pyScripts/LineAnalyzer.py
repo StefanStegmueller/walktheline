@@ -10,9 +10,6 @@ class LineAnalyzer:
     def take_a_photo(self):
         """This method takes a picture from the piCam,
         thread-lock has to be manually released after calling this method"""
-        print "Analyze-Thread: Fall asleep"
-        time.sleep(self.thread_sleep_seconds)
-        print "Analyze-Thread: Wake up"
         # Get the picture (low resolution, so it should be quite fast)
         # Here also other parameters can be specified (e.g.: rotate the image)
         with picamera.PiCamera() as camera:
@@ -85,7 +82,10 @@ class LineAnalyzer:
         return middle
 
     def analyze_pipeline(self):
+        iterations = 0
         while(True):
+            #Analyze analyze thread
+            start_time = time.time()
             print 'Analyze-Thread: threadcount ', threading.active_count()
             # Locking down the critical section as of PiCamera only being accessible once
             self.lock.acquire()
@@ -120,7 +120,9 @@ class LineAnalyzer:
                 cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
                 self.deviation = middle - (width / 2)
                 self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
-
+            now = time.time() - start_time
+            print "Runtime for one Iteration " + iteration + " in Analyze_Tread: " + now
+            iterations += 1
 
 
     def __init__(self, camera_x_resolution, camera_y_resolution, pic_format, thread_sleep_seoncds):
@@ -129,7 +131,6 @@ class LineAnalyzer:
         self.camera_x_resolution = camera_x_resolution
         self.camera_y_resolution = camera_y_resolution
         self.pic_format = pic_format
-        self.thread_sleep_seconds = thread_sleep_seoncds
         return
 
 

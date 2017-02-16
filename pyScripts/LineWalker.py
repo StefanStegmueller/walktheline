@@ -77,9 +77,13 @@ class LineWalker:
         robot = self.robot
 
         print 'initialization complete'
-        
+
+        iteration = 0
+
         #main loop
         while True:
+            #Analyze main thread
+            start_time = time.time()
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
             if not result:
                 if self.on_hold:
@@ -99,11 +103,14 @@ class LineWalker:
                 BrickPiUpdateValues()
 
                 time.sleep(self.settings["threads"]["main_thread_sleep_seconds"])  # sleep
+                now = time.time() - start_time
+                print "Runtime for one Iteration" + iteration + " in Main_Tread: " + now
+                iteration += 1
 
     def start_new_line_worker(self):
         print "Starting new worker"
         line_detection_thread = Thread(target=self.line_analyzer.analyze_pipeline)
-	line_detection_thread.daemon = True
+        line_detection_thread.daemon = True
         line_detection_thread.start()
 
     def __init__(self):
