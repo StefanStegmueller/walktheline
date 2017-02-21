@@ -6,9 +6,9 @@
     "camera":{
         "camera_x_resolution":640,
         "camera_y_resolution":480,
-        "pic_format":"bmp"
+        "pic_format":"bgr"
     },
     "threads":{
-        "main_thread_sleep_seconds":0.01
+        "main_thread_sleep_seconds":0.1
     }
 }

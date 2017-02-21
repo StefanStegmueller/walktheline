@@ -2,29 +2,39 @@ import numpy
 import cv2
 import threading
 import time
-import picamera
+from picamera import PiCamera
+from picamera.array import PiRGBArray
 import io
 
 class LineAnalyzer:
+
+    def __init__(self, camera_x_resolution, camera_y_resolution, pic_format):
+        self.lock = threading.Lock()
+        self.deviation = 0
+        self.camera = PiCamera()
+        self.camera.resolution = (camera_x_resolution, camera_y_resolution)
+        self.camera.framerate = 32
+        self.rawCapture = PiRGBArray(self.camera, size=(camera_x_resolution, camera_y_resolution))
+        self.pic_format = pic_format
 
     def take_a_photo(self):
         """This method takes a picture from the piCam,
         thread-lock has to be manually released after calling this method"""
         # Get the picture (low resolution, so it should be quite fast)
         # Here also other parameters can be specified (e.g.: rotate the image)
-        with picamera.PiCamera() as camera:
-            camera.resolution = (self.camera_x_resolution, self.camera_y_resolution)
-
+        #with picamera.PiCamera() as camera:
+            #camera.resolution = (self.camera_x_resolution, self.camera_y_resolution)
+	self.rawCapture.truncate(0)
             # Create a memory stream so pictures don't need to be saved in a file
-            self.stream = io.BytesIO()
-            camera.capture(self.stream, format=self.pic_format)
+            #self.stream = io.BytesIO()
+        self.camera.capture(self.rawCapture, format=self.pic_format)
             # Convert the picture into a numpy array
-            buffer = numpy.fromstring(self.stream.getvalue(), dtype=numpy.uint8)
+           # buffer = numpy.fromstring(self.stream.getvalue(), dtype=numpy.uint8)
 
             # Now creates an OpenCV image
-            frame = cv2.imdecode(buffer, 1)
+           # frame = cv2.imdecode(buffer, 1)
 
-            return frame
+        return self.rawCapture.array
 
     #turn image 180 degrees
     def turn_img(self, img):
@@ -82,15 +92,11 @@ class LineAnalyzer:
         return middle
 
     def analyze_pipeline(self):
-        iterations = 0
-        while(True):
-            #Analyze analyze thread
-            start_time = time.time()
-            print 'Analyze-Thread: threadcount ', threading.active_count()
-            # Locking down the critical section as of PiCamera only being accessible once
-            self.lock.acquire()
-            image = self.take_a_photo()
-            self.lock.release()
+        time_analyzer = TimeAnalyzer.TimeAnalyzer("Analyze-Thread")
+        for frame in self.camera.capture_continuous(self.rawCapture, format = self.pic_format, use_video_port = True):
+            time_analyzer.start()
+            image = frame.array
+            self.rawCapture.truncate(0)
 
             #read greyscale image
             img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -116,21 +122,14 @@ class LineAnalyzer:
             middle = self.find_middle(roi, contours)
 
             #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
-            if(middle != False):
+            if(middle == True):
+                self.lock.acquire()
                 cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
                 self.deviation = middle - (width / 2)
+                print "Deviation: " + str(deviation)
                 self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
-            now = time.time() - start_time
-            print "Runtime for one Iteration " + iteration + " in Analyze_Tread: " + now
-            iterations += 1
+                self.lock.release()
+            time_analyzer.stop()
 
-
-    def __init__(self, camera_x_resolution, camera_y_resolution, pic_format, thread_sleep_seoncds):
-        self.lock = threading.Lock()
-        self.deviation = 0
-        self.camera_x_resolution = camera_x_resolution
-        self.camera_y_resolution = camera_y_resolution
-        self.pic_format = pic_format
-        return
 
 

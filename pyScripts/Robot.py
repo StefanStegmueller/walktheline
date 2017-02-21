@@ -7,6 +7,7 @@ class Robot:
     def __init__(self):
         self.motors = []
         self.sensors = []
+	self.standard_motor_power = 0
 
     def set_motors(self, motor_list):
         self.motors = motor_list
@@ -67,19 +68,19 @@ class Robot:
             BrickPiUpdateValues()
             time.sleep(0.1)
 
-    def correct_deviation(self, deviation, tolerance, width, standart_power):
+    def correct_deviation(self, deviation, tolerance, width):
         middle_pic = width / 2
         percent_pic = 100 - (abs(deviation) * 100) / middle_pic
-        curve_power = ((standart_power / 2) * percent_pic) / 100
+        curve_power = ((self.standard_motor_power / 2) * percent_pic) / 100
         if(deviation > 0 + tolerance ):
             print 'drive right'
             self.set_motor_power("right",curve_power)
-            self.set_motor_power("left", standart_power - curve_power)
+            self.set_motor_power("left", self.standard_motor_power - curve_power)
         elif(deviation < 0 - tolerance):
             print 'drive left'
             self.set_motor_power("left", curve_power)
-            self.set_motor_power("right", standart_power - curve_power)
+            self.set_motor_power("right", self.standard_motor_power - curve_power)
         else:
             print 'drive forward'
-            self.set_both_motor_powers(standart_power)
+            self.set_both_motor_powers(self.standard_motor_power)
 

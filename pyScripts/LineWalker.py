@@ -30,10 +30,21 @@ import json
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATE_FILE = os.path.join(APP_ROOT, 'web/watchdog-status.txt')
 
 class LineWalker:
-    """This class represents the whole software architecture with the main loop"""
+
+    def __init__(self):
+        """This method initializes and starts the whole software"""
+        # Start worker processes for pattern detection
+        self.settings = self.read_settings()
+        self.initialize_brick_pi()
+        self.robot = Robot.Robot()
+        self.line_analyzer = LineAnalyzer.LineAnalyzer(self.settings["camera"]["camera_x_resolution"],
+                                                       self.settings["camera"]["camera_y_resolution"],
+                                                       self.settings["camera"]["pic_format"])
+        self.already_rotated_tower = False
+        self.initialize_robot(self.settings["robot"]["standard_motor_power"])
+        self.main(self)
 
     def read_settings(self):
         with open('settings') as json_data_file:
@@ -48,84 +59,48 @@ class LineWalker:
         BrickPi.MotorEnable[PORT_B] = 1  # Enable the Motor B
         BrickPi.MotorEnable[PORT_C] = 1  # Enable the Motor A
 
-        BrickPi.MotorEnable[PORT_A] = 1 # Enable the Motor D for the rotation tower
-
         # Send the properties of sensors to BrickPi. Set up the BrickPi
         BrickPiSetupSensors()
         # There's often a long wait for setup with the EV3 sensors.  Up to 5 seconds.
 
-    def initialize_robot(self):
+    def initialize_robot(self, standard_power):
         right_motor = Motor(PORT_B, "right")
         left_motor = Motor(PORT_C, "left")
         self.robot.set_motors([left_motor, right_motor])
-
-        self.rotating_camera_tower = RotationTower(PORT_A, "rotating_camera_tower", self.robot)
+        self.robot.standard_motor_power = standard_power
 
     @staticmethod
     def main(self):
         """This is the main loop of the LineWalker software, iterating without specified end"""
-        power = self.settings["robot"]["standard_motor_power"]  # power level with which the motors run, if the run forward
-        distance_on_collision = 1.5  # seconds to drive backwards on touch collision
-        speed_on_collision = power/2  # power level with which the motors run backwards on touch collision
-        current_thread_count = 2
-        speed_on_turn = speed_on_collision + speed_on_collision/2
-
-        self.on_hold = False
-        self.on_hold_counter = 0
-        self.on_hold_counter_threshold = 50
-
         robot = self.robot
 
-        print 'initialization complete'
+        # Starting threads
+        self.start_new_analyze_worker()
 
-        iteration = 0
+        time_analyzer = TimeAnalyzer.TimeAnalyzer("Main_Thread")
 
         #main loop
         while True:
-            #Analyze main thread
-            start_time = time.time()
+            time_analyzer.start()
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
             if not result:
-                if self.on_hold:
-                    robot.handbrake()
-                else:
-                    robot.set_both_motor_powers(power)
-
-                # One additional active thread is the main thread
-                if threading.active_count() < current_thread_count: #start new line detection thread if broken
-                    self.start_new_line_worker()
+                robot.set_both_motor_powers(robot.standard_motor_power)
                                     
                 print 'start correcting deviation'
-                self.robot.correct_deviation(self.line_analyzer.deviation,
+                robot.correct_deviation(self.line_analyzer.deviation,
                                              self.settings["robot"]["correction_tolerance"],
-                                             self.settings["camera"]["camera_x_resolution"],
-                                             power)
+                                             self.settings["camera"]["camera_x_resolution"])
                 BrickPiUpdateValues()
 
-                time.sleep(self.settings["threads"]["main_thread_sleep_seconds"])  # sleep
-                now = time.time() - start_time
-                print "Runtime for one Iteration" + iteration + " in Main_Tread: " + now
-                iteration += 1
+                time.sleep(self.settings["threads"]["main_thread_sleep_seconds"])# sleep
+            time_analyzer.stop()
 
-    def start_new_line_worker(self):
-        print "Starting new worker"
+    def start_new_analyze_worker(self):
+        print "Starting new analyze worker"
         line_detection_thread = Thread(target=self.line_analyzer.analyze_pipeline)
         line_detection_thread.daemon = True
         line_detection_thread.start()
 
-    def __init__(self):
-        """This method initializes and starts the whole software"""
-        # Start worker processes for pattern detection
-        self.settings = self.read_settings()
-        self.initialize_brick_pi()
-        self.robot = Robot.Robot()
-        self.line_analyzer = LineAnalyzer.LineAnalyzer(self.settings["camera"]["camera_x_resolution"],
-                                                       self.settings["camera"]["camera_y_resolution"],
-                                                       self.settings["camera"]["pic_format"],
-                                                       self.settings["threads"]["pic_analysis_thread_sleep_seconds"])
-        self.already_rotated_tower = False
-        self.initialize_robot()
-        self.main(self)
 
 
 #######################################################
