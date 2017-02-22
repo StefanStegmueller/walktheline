@@ -2,6 +2,7 @@ import numpy
 import cv2
 import threading
 import time
+from TimeAnalyzer import *
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 import io
@@ -38,10 +39,10 @@ class LineAnalyzer:
 
     #turn image 180 degrees
     def turn_img(self, img):
-        width = img.shape[0]
-        height = img.shape[1] #height and width are switched
-        M = cv2.getRotationMatrix2D((height / 2, width / 2), 180, 1)
-        turned_img = cv2.warpAffine(img, M, (height, width))
+        heigth = img.shape[0]
+       	width = img.shape[1]
+        M = cv2.getRotationMatrix2D((width / 2, heigth / 2), 180, 1)
+        turned_img = cv2.warpAffine(img, M, (width, heigth))
         return turned_img
 
     def print_image(self, img):
@@ -91,8 +92,14 @@ class LineAnalyzer:
             return False
         return middle
 
+    def calculate_roi_start_height(self, height):
+         return height - (height * 0.99)
+
+    def calculate_roi_height(self, height):
+        return height - (height * 0.9)
+
     def analyze_pipeline(self):
-        time_analyzer = TimeAnalyzer.TimeAnalyzer("Analyze-Thread")
+        time_analyzer = TimeAnalyzer("Analyze-Thread")
         for frame in self.camera.capture_continuous(self.rawCapture, format = self.pic_format, use_video_port = True):
             time_analyzer.start()
             image = frame.array
@@ -105,9 +112,9 @@ class LineAnalyzer:
             width = img.shape[1]
 
             start_x = 0
-            start_y = height - (height * 0.99)
+            start_y = self.calculate_roi_start_height(height)
             new_w = width
-            new_h = height - (height * 0.9)
+            new_h = self.calculate_roi_height(height)
 
             #crop ROI out of given image
             roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
@@ -122,11 +129,11 @@ class LineAnalyzer:
             middle = self.find_middle(roi, contours)
 
             #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
-            if(middle == True):
+            if(middle != True):
                 self.lock.acquire()
                 cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
                 self.deviation = middle - (width / 2)
-                print "Deviation: " + str(deviation)
+                print "@@@@@@@@@Deviation: " + str(self.deviation)
                 self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
                 self.lock.release()
             time_analyzer.stop()

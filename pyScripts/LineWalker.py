@@ -18,13 +18,15 @@
 # import BrickPi as BrickPi
 from BrickPi import *  # import BrickPi.py file to use BrickPi operations
 from Robot import *
-from RotationTower import *
+from Motor import *
+from TimeAnalyzer import *
 import LineAnalyzer
 import Robot
 import os
 from threading import Thread
 import threading
 import json
+import requests
 
 # from BrickPi.BrickPi import PORT_C, PORT_B, PORT_3, PORT_2, BrickPiSetup, BrickPiSetupSensors
 
@@ -69,6 +71,17 @@ class LineWalker:
         self.robot.set_motors([left_motor, right_motor])
         self.robot.standard_motor_power = standard_power
 
+    def send_info(self):
+        json = {
+            "roi_position" : self.line_analyzer.calculate_roi_start_heigth(self.settings["camera"]["camera_x_resolution"]),
+            "roi_height" : self.line_analyzer.calculate_roi_heigth(self.settings["camera"]["camera_x_resolution"]),
+            "path_position" : self.settings["camera"]["camera_x_resolution"] / 2 + self.line_analyzer.deviation,
+            "path_width" : 0
+        }
+        url = "http://192.168.0.103/upload.php"
+        response = requests.post(url, data = json)
+        print response.text
+
     @staticmethod
     def main(self):
         """This is the main loop of the LineWalker software, iterating without specified end"""
@@ -77,7 +90,7 @@ class LineWalker:
         # Starting threads
         self.start_new_analyze_worker()
 
-        time_analyzer = TimeAnalyzer.TimeAnalyzer("Main_Thread")
+        time_analyzer = TimeAnalyzer("Main_Thread")
 
         #main loop
         while True:
@@ -93,6 +106,7 @@ class LineWalker:
                 BrickPiUpdateValues()
 
                 time.sleep(self.settings["threads"]["main_thread_sleep_seconds"])# sleep
+		#self.send_info()
             time_analyzer.stop()
 
     def start_new_analyze_worker(self):
