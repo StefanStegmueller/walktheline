@@ -43,7 +43,8 @@ class LineWalker:
         self.robot = Robot.Robot()
         self.line_analyzer = LineAnalyzer.LineAnalyzer(self.settings["camera"]["camera_x_resolution"],
                                                        self.settings["camera"]["camera_y_resolution"],
-                                                       self.settings["camera"]["pic_format"])
+                                                       self.settings["camera"]["pic_format"],
+						       self.robot)
         self.already_rotated_tower = False
         self.initialize_robot(self.settings["robot"]["standard_motor_power"])
         self.main(self)
@@ -73,14 +74,14 @@ class LineWalker:
 
     def send_info(self):
         json = {
-            "roi_position" : self.line_analyzer.calculate_roi_start_heigth(self.settings["camera"]["camera_x_resolution"]),
-            "roi_height" : self.line_analyzer.calculate_roi_heigth(self.settings["camera"]["camera_x_resolution"]),
-            "path_position" : self.settings["camera"]["camera_x_resolution"] / 2 + self.line_analyzer.deviation,
+            "roi_position" : self.line_analyzer.calculate_roi_start_height(self.settings["camera"]["camera_x_resolution"]),
+            "roi_height" : self.line_analyzer.calculate_roi_height(self.settings["camera"]["camera_x_resolution"]),
+            "path_position" : self.line_analyzer.deviation,
             "path_width" : 0
         }
-        url = "http://192.168.0.103/upload.php"
-        response = requests.post(url, data = json)
-        print response.text
+        url = "http://192.168.0.101/upload.php"
+	files = {'file': open('thresh.jpg')}
+        response = requests.post(url, files = files,  data = json)
 
     @staticmethod
     def main(self):
@@ -94,20 +95,8 @@ class LineWalker:
 
         #main loop
         while True:
-            time_analyzer.start()
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
-            if not result:
-                robot.set_both_motor_powers(robot.standard_motor_power)
-                                    
-                print 'start correcting deviation'
-                robot.correct_deviation(self.line_analyzer.deviation,
-                                             self.settings["robot"]["correction_tolerance"],
-                                             self.settings["camera"]["camera_x_resolution"])
-                BrickPiUpdateValues()
-
-                time.sleep(self.settings["threads"]["main_thread_sleep_seconds"])# sleep
-		#self.send_info()
-            time_analyzer.stop()
+	    self.send_info()
 
     def start_new_analyze_worker(self):
         print "Starting new analyze worker"

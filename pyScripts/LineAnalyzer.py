@@ -9,7 +9,7 @@ import io
 
 class LineAnalyzer:
 
-    def __init__(self, camera_x_resolution, camera_y_resolution, pic_format):
+    def __init__(self, camera_x_resolution, camera_y_resolution, pic_format, robot):
         self.lock = threading.Lock()
         self.deviation = 0
         self.camera = PiCamera()
@@ -17,25 +17,7 @@ class LineAnalyzer:
         self.camera.framerate = 32
         self.rawCapture = PiRGBArray(self.camera, size=(camera_x_resolution, camera_y_resolution))
         self.pic_format = pic_format
-
-    def take_a_photo(self):
-        """This method takes a picture from the piCam,
-        thread-lock has to be manually released after calling this method"""
-        # Get the picture (low resolution, so it should be quite fast)
-        # Here also other parameters can be specified (e.g.: rotate the image)
-        #with picamera.PiCamera() as camera:
-            #camera.resolution = (self.camera_x_resolution, self.camera_y_resolution)
-	self.rawCapture.truncate(0)
-            # Create a memory stream so pictures don't need to be saved in a file
-            #self.stream = io.BytesIO()
-        self.camera.capture(self.rawCapture, format=self.pic_format)
-            # Convert the picture into a numpy array
-           # buffer = numpy.fromstring(self.stream.getvalue(), dtype=numpy.uint8)
-
-            # Now creates an OpenCV image
-           # frame = cv2.imdecode(buffer, 1)
-
-        return self.rawCapture.array
+	self.robot = robot
 
     #turn image 180 degrees
     def turn_img(self, img):
@@ -78,22 +60,37 @@ class LineAnalyzer:
         print border
         return border
 
-    def find_middle(self, roi, contours):
-        borders = []
-        for contour in contours:
-            moment = cv2.moments(contour)
-            if(moment['m00'] > 0):
-                self.draw_contour(roi, contour)
-                borders.append(self.calc_borderaverage(contour))
-        if(len(borders) == 2):
-            middle = min(borders) + (abs(borders[0] - borders[1])/2)
-        else:
-            print 'More or less than two borders detected: ' + len(borders).__str__() + ' borders'
-            return False
-        return middle
+    def find_center_of_mass(self, img):
+        time_analyzer = TimeAnalyzer("Center of Mass")
+        time_analyzer.start()
+        """height = img.shape[0]
+        width = img.shape[1]
+
+        sum_of_greyscale = 0
+        weighted_sum = 0
+
+        for line in range(0, height):
+            for column in range(0, width):
+                sum_of_greyscale += img[line][column]
+                weighted_sum +=  img[line][column] * column
+
+        #sum_of_greyscale += img[0: height, 0: width]
+        #weighted_sum += img[0: height, 0: width] * column
+
+	    middle = weighted_sum / sum_of_greyscale"""
+        moments = cv2.moments(img, True)
+
+	if moments['m00'] == 0:
+		return 320
+        center = moments['m10']  / moments['m00']
+
+        time_analyzer.stop()
+
+        return center
+
 
     def calculate_roi_start_height(self, height):
-         return height - (height * 0.99)
+        return height - (height * 0.99)
 
     def calculate_roi_height(self, height):
         return height - (height * 0.9)
@@ -118,25 +115,31 @@ class LineAnalyzer:
 
             #crop ROI out of given image
             roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
-            #smooth image
-            blur = cv2.bilateralFilter(roi, 11, 17, 17)
 
-            #detect edges
-            edged = cv2.Canny(blur, 30, 200)
+            brightness_limit = 80
 
-            contours, hierarchy = self.find_contours(edged)
+            ret, thresh = cv2.threshold(roi, brightness_limit, 255, cv2.THRESH_BINARY_INV)
+            
+	    start_x = 1
+  	    start_y -= 1
+	    new_w -= 1
+	    new_h -= 1
 
-            middle = self.find_middle(roi, contours)
+	    thresh = self.crop_roi(thresh, start_x, start_y, new_w, new_h)	    
 
-            #cv2.drawContours(roi, contours, -1, (0, 255, 0), 3)
-            if(middle != True):
-                self.lock.acquire()
-                cv2.line(roi, (middle, 0), (middle, roi.shape[0]), (255, 0, 0), 1)
-                self.deviation = middle - (width / 2)
-                print "@@@@@@@@@Deviation: " + str(self.deviation)
-                self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
-                self.lock.release()
+            cv2.imwrite("thresh.jpg", thresh)
+
+            middle = self.find_center_of_mass(thresh)
+
+            print "@@@@@@@@@Middle: " + str(middle)
+
+            self.lock.acquire()
+            self.deviation = middle - (width / 2)
+            self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
+            self.deviation = self.deviation / (width / 2.0)
+            print "@@@@@@@@@Deviation: " + str(self.deviation)
+            self.robot.correct_deviation(self.deviation)
+            self.lock.release()
             time_analyzer.stop()
-
 
 

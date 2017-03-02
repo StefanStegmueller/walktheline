@@ -1,4 +1,6 @@
+import numpy
 from BrickPi import *  # import BrickPi.py file to use BrickPi operations
+from Controller import *
 
 # This class is an abstract representation of a Robot, consisting of sensors and actors
 class Robot:
@@ -16,6 +18,7 @@ class Robot:
         self.sensors = sensor_list
 
     def set_motor_power(self, position, motor_power_level):
+	motor_power_level = numpy.int32(motor_power_level).item()
         for each_motor in self.motors:
             if each_motor.position == position:
                 each_motor.set_power(motor_power_level)
@@ -26,6 +29,7 @@ class Robot:
                 each_motor.get_power()
 
     def set_both_motor_powers(self, motor_power_level):
+	motor_power_level = numpy.int32(motor_power_level).item()
         for each_motor in self.motors:
             BrickPi.MotorSpeed[each_motor.port] = motor_power_level
 
@@ -68,19 +72,39 @@ class Robot:
             BrickPiUpdateValues()
             time.sleep(0.1)
 
-    def correct_deviation(self, deviation, tolerance, width):
-        middle_pic = width / 2
-        percent_pic = 100 - (abs(deviation) * 100) / middle_pic
-        curve_power = ((self.standard_motor_power / 2) * percent_pic) / 100
-        if(deviation > 0 + tolerance ):
-            print 'drive right'
-            self.set_motor_power("right",curve_power)
-            self.set_motor_power("left", self.standard_motor_power - curve_power)
-        elif(deviation < 0 - tolerance):
-            print 'drive left'
-            self.set_motor_power("left", curve_power)
-            self.set_motor_power("right", self.standard_motor_power - curve_power)
-        else:
-            print 'drive forward'
-            self.set_both_motor_powers(self.standard_motor_power)
+    def correct_deviation(self, deviation):
+	controller = Controller()
+	controllDirection = controller.controllDirection(deviation)
+	print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@qqq@@@Regler: " + str(controllDirection)
+	if(controllDirection <= 0):
+		self.set_motor_power("right",self.standard_motor_power)
+	else:
+		self.set_motor_power("right",self.standard_motor_power - (controllDirection * self.standard_motor_power))
+		
+		
+	if(controllDirection >= 0):
+		self.set_motor_power("left",self.standard_motor_power)
+	else:
+		self.set_motor_power("left",self.standard_motor_power + (controllDirection * self.standard_motor_power))
+    
+	
+	
+	
+	
+	
+        #middle_pic = width / 2
+        #percent_pic = 100 - (abs(deviation) * 100) / middle_pic
+        #curve_power = ((self.standard_motor_power / 2) * percent_pic) / 100
+        #if(deviation > 0 + tolerance ):
+        #    print 'drive right'
+        #    self.set_motor_power("right",curve_power)
+        #    self.set_motor_power("left", self.standard_motor_power - curve_power)
+        #elif(deviation < 0 - tolerance):
+        #    print 'drive left'
+        #    self.set_motor_power("left", curve_power)
+        #    self.set_motor_power("right", self.standard_motor_power - curve_power)
+        #else:
+        #    print 'drive forward'
+        #    self.set_both_motor_powers(self.standard_motor_power)
+	
 
