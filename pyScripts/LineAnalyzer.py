@@ -116,16 +116,18 @@ class LineAnalyzer:
             #crop ROI out of given image
             roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
 
-            brightness_limit = 80
+            brightness_limit = cv2.mean(roi, mask = None)
 
-            ret, thresh = cv2.threshold(roi, brightness_limit, 255, cv2.THRESH_BINARY_INV)
+            ret, thresh = cv2.threshold(roi, brightness_limit[0], 255, cv2.THRESH_BINARY_INV)
+
+            #crop white lines of image
             
-	    start_x = 1
-  	    start_y -= 1
-	    new_w -= 1
-	    new_h -= 1
+            start_x = 1
+            start_y -= 1
+            new_w -= 1
+            new_h -= 1
 
-	    thresh = self.crop_roi(thresh, start_x, start_y, new_w, new_h)	    
+            thresh = self.crop_roi(thresh, start_x, start_y, new_w, new_h)
 
             cv2.imwrite("thresh.jpg", thresh)
 
