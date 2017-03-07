@@ -80,7 +80,7 @@ class LineWalker:
             "path_width" : 0
         }
         url = "http://192.168.0.101/upload.php"
-	files = {'file': open('thresh.jpg')}
+        files = {'file': open('thresh.jpg')}
         response = requests.post(url, files = files,  data = json)
 
     @staticmethod
@@ -96,7 +96,9 @@ class LineWalker:
         #main loop
         while True:
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
-	    self.send_info()
+            if(self.line_analyzer.send_info):
+                self.send_info()
+                self.line_analyzer.send_info = False
 
     def start_new_analyze_worker(self):
         print "Starting new analyze worker"

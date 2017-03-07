@@ -17,12 +17,13 @@ class LineAnalyzer:
         self.camera.framerate = 32
         self.rawCapture = PiRGBArray(self.camera, size=(camera_x_resolution, camera_y_resolution))
         self.pic_format = pic_format
-	self.robot = robot
+        self.robot = robot
+        self.send_info = False
 
     #turn image 180 degrees
     def turn_img(self, img):
         heigth = img.shape[0]
-       	width = img.shape[1]
+        width = img.shape[1]
         M = cv2.getRotationMatrix2D((width / 2, heigth / 2), 180, 1)
         turned_img = cv2.warpAffine(img, M, (width, heigth))
         return turned_img
@@ -80,8 +81,8 @@ class LineAnalyzer:
 	    middle = weighted_sum / sum_of_greyscale"""
         moments = cv2.moments(img, True)
 
-	if moments['m00'] == 0:
-		return 320
+        if moments['m00'] == 0:
+            return 320
         center = moments['m10']  / moments['m00']
 
         time_analyzer.stop()
@@ -143,5 +144,6 @@ class LineAnalyzer:
             self.robot.correct_deviation(self.deviation)
             self.lock.release()
             time_analyzer.stop()
+            self.send_info = True
 
 
