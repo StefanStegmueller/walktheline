@@ -1,52 +1,50 @@
-class Controller(object):
-  
+class Controller:
+
   def __init__(self):
-    self.lastInputs = [3]
-    self.lastInputs.append(0.0) # e(k-2)
-    self.lastInputs.append(0.0) # e(k-1)
-    self.lastInputs.append(0.0) # e(k)
-    self.lastOutputs = [2]
-    self.lastOutputs.append(0.0)  # u(k-2)
-    self.lastOutputs.append(0.0)  # u(k-1)
+    self.Ta = 0.06     #Abstastzeit
+    self.max = 1.0
+    self.min = -1.0
+    self.Kp = 1.5    #1.5
+    self.Ki = 0.2   #0.01
+    self.Kd = self.Ki * 0.1
+    self.pre_error = 0.0
+    self.integral = 0.0
   
   
   
   
   def controllDirection(self, positionOfTheLine):
-    #u(k) = p2*u(k-2) + p1*u(k-1) + q0*e(k) + q1*e(k-1) + q2*e(k-2)
+    setpoint = 0.0
     
-    Kp = 0.1
-    Ki = 1
-    Kd = 0.0005
-    Ta = 0.1
-    Ti = 0.05 # Nachstellzeit
-    Td = 0.01 # Vorstellzeit
+    # Calculate error
+    error = setpoint + positionOfTheLine
     
-    p2 = 0.2
-    p1 = 0.05
+    # P
+    Pout = self.Kp * error
+    print '$$$$$$$$$$$$$ Pout: ' + str(Pout)
     
-    q0 = Kp + Ki * Ta/2 * Ti + Kd * Td/Ta
-    q1 = -Kp + Ki * Ta/2 * Ti - Kd*2*Td/Ta
-    q2 = Kd*Td/Ta
+    # I
+    self.integral += error * self.Ta;
+    Iout = self.Ki * self.integral;
+    print '$$$$$$$$$$$$$ Iout: ' + str(Iout)
     
-    
-    self.addInput(positionOfTheLine)
-    
-    output = p2*self.lastOutputs[0] + p1 * self.lastOutputs[1] + q0 * self.lastInputs[2] + q1 * self.lastInputs[1] + q2 * self.lastInputs[0]
-    
-    self.addOutput(output)
-
-
-    return output
+    # D
+    derivative = (self.pre_error - error) / self.Ta;
+    Dout = self.Kd * derivative;
+    print '$$$$$$$$$$$$$ Dout: ' + str(Dout)
     
     
-  def addInput(self, positionOfTheLine):
-    self.lastInputs[0] = self.lastInputs[1]
-    self.lastInputs[1] = self.lastInputs[2]
-    self.lastInputs[2] = positionOfTheLine
-    return
+    # output
+    output = Pout + Iout + Dout
+    print '$$$$$$$$$$$$$ output: ' + str(output)
+    
+    if output > self.max:
+      output = self.max
+    elif output < self.min:
+      output = self.min
+    
   
-  def addOutput(self, output):
-    self.lastOutputs[0] = self.lastOutputs[1]
-    self.lastOutputs[1] = output
-    return
+    # Save error to previous error
+    self.pre_error = error;
+
+    return output;

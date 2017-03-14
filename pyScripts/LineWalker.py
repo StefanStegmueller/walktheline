@@ -45,7 +45,6 @@ class LineWalker:
                                                        self.settings["camera"]["camera_y_resolution"],
                                                        self.settings["camera"]["pic_format"],
 						       self.robot)
-        self.already_rotated_tower = False
         self.initialize_robot(self.settings["robot"]["standard_motor_power"])
         self.main(self)
 

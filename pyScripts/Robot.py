@@ -75,15 +75,16 @@ class Robot:
     def correct_deviation(self, deviation):
 	controller = Controller()
 	controllDirection = controller.controllDirection(deviation)
+	curve_speed_factor = 0.4
 	print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@qqq@@@Regler: " + str(controllDirection)
 	if(controllDirection <= 0):
-		self.set_motor_power("right",self.standard_motor_power)
+		self.set_motor_power("right",self.standard_motor_power + self.standard_motor_power * controllDirection * curve_speed_factor)
 	else:
 		self.set_motor_power("right",self.standard_motor_power - (controllDirection * self.standard_motor_power))
 		
 		
 	if(controllDirection >= 0):
-		self.set_motor_power("left",self.standard_motor_power)
+		self.set_motor_power("left",self.standard_motor_power - self.standard_motor_power * controllDirection * curve_speed_factor)
 	else:
 		self.set_motor_power("left",self.standard_motor_power + (controllDirection * self.standard_motor_power))
     
