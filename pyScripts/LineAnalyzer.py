@@ -19,6 +19,9 @@ class LineAnalyzer:
         self.pic_format = pic_format
         self.robot = robot
         self.send_info = False
+        self.on_track = True
+        self.manual_deviation = None
+        self.wait_for_manual_instruction = True
 
     #turn image 180 degrees
     def turn_img(self, img):
@@ -64,21 +67,6 @@ class LineAnalyzer:
     def find_center_of_mass(self, img):
         time_analyzer = TimeAnalyzer("Center of Mass")
         time_analyzer.start()
-        """height = img.shape[0]
-        width = img.shape[1]
-
-        sum_of_greyscale = 0
-        weighted_sum = 0
-
-        for line in range(0, height):
-            for column in range(0, width):
-                sum_of_greyscale += img[line][column]
-                weighted_sum +=  img[line][column] * column
-
-        #sum_of_greyscale += img[0: height, 0: width]
-        #weighted_sum += img[0: height, 0: width] * column
-
-	    middle = weighted_sum / sum_of_greyscale"""
         moments = cv2.moments(img, True)
 
         if moments['m00'] == 0:
@@ -95,6 +83,36 @@ class LineAnalyzer:
 
     def calculate_roi_height(self, height):
         return height - (height * 0.9)
+
+    def check_on_track(self, thresh):
+        # HitMiss
+		kernel = numpy.ones((50, 50), numpy.uint8)
+        hitmiss = cv2.morphologyEx(thresh, cv2.MORPH_HITMISS, kernel)
+
+        #Genug schwarz?
+		brightness_avg = cv2.mean(hitmiss, mask=None)
+
+        #Schwerpunkt Messen
+		if(brightness_avg[0] > 10):
+            mu = cv2.moments(hitmiss,True)
+            center = mu['m10'] / mu['m00']
+            self.on_track = True
+            print "Linie erkannt"
+        else:
+			self.on_track = False
+			print "Keine Linie"
+
+
+    def set_deviation(self, middle, width):
+        if (self.on_track):
+            self.deviation = middle - (width / 2)
+            self.deviation = numpy.int32(self.deviation).item()  # cast numpy data type to native data type
+            self.deviation = self.deviation / (width / 2.0)
+        else:
+        if (self.wait_for_manual_instruction):
+            self.robot.handbrake()
+        else:
+            self.deviation = self.manual_deviation
 
     def analyze_pipeline(self):
         time_analyzer = TimeAnalyzer("Analyze-Thread")
@@ -122,7 +140,6 @@ class LineAnalyzer:
             ret, thresh = cv2.threshold(roi, brightness_limit, 255, cv2.THRESH_BINARY_INV)
 
             #crop white lines of image
-            
             start_x = 1
             start_y -= 1
             new_w -= 1
@@ -136,14 +153,16 @@ class LineAnalyzer:
 
             print "@@@@@@@@@Middle: " + str(middle)
 
+
+            self.check_on_track(tresh)
+
             self.lock.acquire()
-            self.deviation = middle - (width / 2)
-            self.deviation = numpy.int32(self.deviation).item() # cast numpy data type to native data type
-            self.deviation = self.deviation / (width / 2.0)
+            self.set_deviation(middle, width)
             print "@@@@@@@@@Deviation: " + str(self.deviation)
-            self.robot.correct_deviation(self.deviation)
+            self.robot.correct_deviation(self.deviation, self.on_track)
             self.lock.release()
             time_analyzer.stop()
             self.send_info = True
+
 
 

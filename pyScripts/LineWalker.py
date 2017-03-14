@@ -71,12 +71,14 @@ class LineWalker:
         self.robot.set_motors([left_motor, right_motor])
         self.robot.standard_motor_power = standard_power
 
-    def send_info(self):
+    def communicate_to_server(self):
         json = {
             "roi_position" : self.line_analyzer.calculate_roi_start_height(self.settings["camera"]["camera_x_resolution"]),
             "roi_height" : self.line_analyzer.calculate_roi_height(self.settings["camera"]["camera_x_resolution"]),
             "path_position" : self.line_analyzer.deviation,
-            "path_width" : 0
+            "path_width" : 0,
+            "on_track" : self.line_analyzer.on_track,
+            "wait_for_manual_instruction" : self.line_analyzer.wait_for_manual_instruction
         }
         url = "http://192.168.0.101/upload.php"
         files = {'file': open('thresh.jpg')}
@@ -96,7 +98,7 @@ class LineWalker:
         while True:
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
             if(self.line_analyzer.send_info):
-                self.send_info()
+                self.communicate_to_server()
                 self.line_analyzer.send_info = False
 
     def start_new_analyze_worker(self):
