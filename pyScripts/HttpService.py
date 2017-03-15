@@ -22,6 +22,7 @@ class HttpService:
         files = {'file': open(file)}
         response = requests.post(url, files=files, data=self.json_data)
         print response.text
-        data = json.dumps(response.text)
-        self.direction = data["direction"]
-        self.wait_for_manual_instruction = data["wait_for_manual_instruction"]
+        data = response.json()
+	#print data
+        self.direction = data['direction']
+        self.wait_for_manual_instruction = data['wait_for_manual_instruction']

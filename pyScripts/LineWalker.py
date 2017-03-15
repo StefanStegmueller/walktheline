@@ -57,8 +57,8 @@ class LineWalker:
 
         http_service.set_data(roi_position, roi_height, path_position, on_track, wait_for_manual_instruction)
         http_service.send_data(url, file)
-
-        self.line_analyzer.deviation = http_service.direction
+	if not (self.line_analyzer.on_track):
+        	self.line_analyzer.manual_deviation = http_service.direction
         self.line_analyzer.wait_for_manual_instruction = http_service.wait_for_manual_instruction
 
 

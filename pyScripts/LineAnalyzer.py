@@ -20,7 +20,7 @@ class LineAnalyzer:
         self.robot = robot
         self.send_info = False
         self.on_track = True
-        self.manual_deviation = None
+        self.manual_deviation = 0
         self.wait_for_manual_instruction = True
 
     # turn image 180 degrees
@@ -93,9 +93,8 @@ class LineAnalyzer:
 
         # Schwerpunkt Messen
         if (brightness_avg[0] > 10):
-            mu = cv2.moments(thresh, True)
-            center = mu['m10'] / mu['m00']
             self.on_track = True
+	    self.wait_for_manual_instruction = False
             print "Linie erkannt"
         else:
             self.on_track = False
@@ -156,7 +155,8 @@ class LineAnalyzer:
             self.lock.acquire()
             self.set_deviation(middle, width)
             print "@@@@@@@@@Deviation: " + str(self.deviation)
-            self.robot.correct_deviation(self.deviation, self.on_track)
+	    if not(self.wait_for_manual_instruction):	
+            	self.robot.correct_deviation(self.deviation, self.on_track)
             self.lock.release()
             time_analyzer.stop()
             self.send_info = True

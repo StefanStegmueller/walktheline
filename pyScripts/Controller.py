@@ -5,7 +5,7 @@ class Controller:
     self.max = 1.0
     self.min = -1.0
     self.Kp = 1.5    #1.5
-    self.Ki = 0.2   #0.01
+    self.Ki = 0.2   #0.2
     self.Kd = self.Ki * 0.1
     self.pre_error = 0.0
     self.integral = 0.0
