@@ -7,8 +7,8 @@ from picamera import PiCamera
 from picamera.array import PiRGBArray
 import io
 
-class LineAnalyzer:
 
+class LineAnalyzer:
     def __init__(self, camera_x_resolution, camera_y_resolution, pic_format, robot):
         self.lock = threading.Lock()
         self.deviation = 0
@@ -23,7 +23,7 @@ class LineAnalyzer:
         self.manual_deviation = None
         self.wait_for_manual_instruction = True
 
-    #turn image 180 degrees
+    # turn image 180 degrees
     def turn_img(self, img):
         heigth = img.shape[0]
         width = img.shape[1]
@@ -58,7 +58,7 @@ class LineAnalyzer:
             x_coordinates.append(value[0][0])
         return x_coordinates
 
-    def calc_borderaverage (self, contour):
+    def calc_borderaverage(self, contour):
         x_coordinates = self.parse_xcoordinates(contour)
         border = sum(x_coordinates) / len(x_coordinates)
         print border
@@ -71,12 +71,11 @@ class LineAnalyzer:
 
         if moments['m00'] == 0:
             return 320
-        center = moments['m10']  / moments['m00']
+        center = moments['m10'] / moments['m00']
 
         time_analyzer.stop()
 
         return center
-
 
     def calculate_roi_start_height(self, height):
         return height - (height * 0.99)
@@ -86,22 +85,21 @@ class LineAnalyzer:
 
     def check_on_track(self, thresh):
         # HitMiss
-		kernel = numpy.ones((50, 50), numpy.uint8)
-        hitmiss = cv2.morphologyEx(thresh, cv2.MORPH_HITMISS, kernel)
+        # kernel = numpy.ones((50, 50), numpy.uint8)
+        # hitmiss = cv2.morphologyEx(thresh, cv2.MORPH_HITMISS, kernel)
 
-        #Genug schwarz?
-		brightness_avg = cv2.mean(hitmiss, mask=None)
+        # Genug schwarz?
+        brightness_avg = cv2.mean(thresh, mask=None)
 
-        #Schwerpunkt Messen
-		if(brightness_avg[0] > 10):
-            mu = cv2.moments(hitmiss,True)
+        # Schwerpunkt Messen
+        if (brightness_avg[0] > 10):
+            mu = cv2.moments(thresh, True)
             center = mu['m10'] / mu['m00']
             self.on_track = True
             print "Linie erkannt"
         else:
-			self.on_track = False
-			print "Keine Linie"
-
+            self.on_track = False
+            print "Keine Linie"
 
     def set_deviation(self, middle, width):
         if (self.on_track):
@@ -109,19 +107,19 @@ class LineAnalyzer:
             self.deviation = numpy.int32(self.deviation).item()  # cast numpy data type to native data type
             self.deviation = self.deviation / (width / 2.0)
         else:
-        if (self.wait_for_manual_instruction):
-            self.robot.handbrake()
-        else:
-            self.deviation = self.manual_deviation
+            if (self.wait_for_manual_instruction):
+                self.robot.handbrake()
+            else:
+                self.deviation = self.manual_deviation
 
     def analyze_pipeline(self):
         time_analyzer = TimeAnalyzer("Analyze-Thread")
-        for frame in self.camera.capture_continuous(self.rawCapture, format = self.pic_format, use_video_port = True):
+        for frame in self.camera.capture_continuous(self.rawCapture, format=self.pic_format, use_video_port=True):
             time_analyzer.start()
             image = frame.array
             self.rawCapture.truncate(0)
 
-            #read greyscale image
+            # read greyscale image
             img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             height = img.shape[0]
@@ -132,14 +130,14 @@ class LineAnalyzer:
             new_w = width
             new_h = self.calculate_roi_height(height)
 
-            #crop ROI out of given image
+            # crop ROI out of given image
             roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
 
-            brightness_limit = cv2.mean(roi, mask = None)[0] - 40
+            brightness_limit = cv2.mean(roi, mask=None)[0] - 40
 
             ret, thresh = cv2.threshold(roi, brightness_limit, 255, cv2.THRESH_BINARY_INV)
 
-            #crop white lines of image
+            # crop white lines of image
             start_x = 1
             start_y -= 1
             new_w -= 1
@@ -153,8 +151,7 @@ class LineAnalyzer:
 
             print "@@@@@@@@@Middle: " + str(middle)
 
-
-            self.check_on_track(tresh)
+            self.check_on_track(thresh)
 
             self.lock.acquire()
             self.set_deviation(middle, width)
@@ -163,6 +160,3 @@ class LineAnalyzer:
             self.lock.release()
             time_analyzer.stop()
             self.send_info = True
-
-
-

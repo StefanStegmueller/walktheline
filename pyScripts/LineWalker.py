@@ -83,6 +83,7 @@ class LineWalker:
         url = "http://192.168.0.101/upload.php"
         files = {'file': open('thresh.jpg')}
         response = requests.post(url, files = files,  data = json)
+        print response.text
 
     @staticmethod
     def main(self):
