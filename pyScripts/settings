@@ -1,6 +1,6 @@
 {
     "robot":{
-        "standard_motor_power":255
+        "standard_motor_power":150
     },
     "camera":{
         "camera_x_resolution":640,
