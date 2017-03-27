@@ -22,6 +22,8 @@ class LineAnalyzer:
         self.on_track = True
         self.manual_deviation = 0
         self.wait_for_manual_instruction = True
+        self.tolerance_manual_control = 20
+        self.tolerance_counter = 0
 
     # turn image 180 degrees
     def turn_img(self, img):
@@ -94,11 +96,14 @@ class LineAnalyzer:
         # Schwerpunkt Messen
         if (brightness_avg[0] > 10):
             self.on_track = True
-	    self.wait_for_manual_instruction = False
+            self.wait_for_manual_instruction = False
+            self.tolerance_counter = 0
             print "Linie erkannt"
-        else:
+        elif (self.tolerance_counter == self.tolerance_manual_control):
             self.on_track = False
             print "Keine Linie"
+        else:
+            self.tolerance_counter += 1
 
     def set_deviation(self, middle, width):
         if (self.on_track):
@@ -134,7 +139,7 @@ class LineAnalyzer:
 
             brightness_limit = cv2.mean(roi, mask=None)[0] - 40
 
-            ret, thresh = cv2.threshold(roi, brightness_limit, 255, cv2.THRESH_BINARY_INV)
+            ret, thresh = cv2.threshold(roi, 80, 255, cv2.THRESH_BINARY_INV)
 
             # crop white lines of image
             start_x = 1
@@ -155,8 +160,8 @@ class LineAnalyzer:
             self.lock.acquire()
             self.set_deviation(middle, width)
             print "@@@@@@@@@Deviation: " + str(self.deviation)
-	    if not(self.wait_for_manual_instruction):	
-            	self.robot.correct_deviation(self.deviation, self.on_track)
+            if not(self.wait_for_manual_instruction):
+                self.robot.correct_deviation(self.deviation, self.on_track)
             self.lock.release()
             time_analyzer.stop()
             self.send_info = True
