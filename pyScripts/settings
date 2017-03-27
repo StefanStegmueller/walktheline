@@ -7,7 +7,8 @@
         "camera_y_resolution":480,
         "pic_format":"bgr",
         "decrease_from_average_brightness":40,
-        "lowest_brightness_average":10
+        "lowest_brightness_average":10,
+        "tolerance_manual_controll":5
     },
     "server":{
         "url":"http://192.168.0.101/upload.php",

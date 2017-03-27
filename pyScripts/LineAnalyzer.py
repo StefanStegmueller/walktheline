@@ -21,7 +21,7 @@ class LineAnalyzer:
         self.__pic_format = pic_format
         self.__send_info = False
         self.__on_track = True
-        self.__tolerance_manual_control = 20
+        self.__tolerance_manual_controll = SettingsParser.get_value("camera", "tolerance_manual_controll")
         self.__tolerance_counter = 0
         self.__middle = 0
 
@@ -103,7 +103,7 @@ class LineAnalyzer:
             self.__on_track = True
             self.__tolerance_counter = 0
             print "Linie erkannt"
-        elif (self.__tolerance_counter == self.__tolerance_manual_control):
+        elif (self.__tolerance_counter == self.__tolerance_manual_controll):
             self.__on_track = False
             print "Keine Linie"
         else:
