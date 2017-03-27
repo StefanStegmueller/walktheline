@@ -1,19 +1,17 @@
-class Controller:
+class AutoController:
 
   def __init__(self):
-    self.Ta = 0.06     #Abstastzeit
+    self.Ta = 0.09     #Abstastzeit
     self.max = 1.0
     self.min = -1.0
-    self.Kp = 2.0    #1.5
+    self.Kp = 1.5    #1.5
     self.Ki = 0.2   #0.2
     self.Kd = self.Ki * 0.1
     self.pre_error = 0.0
     self.integral = 0.0
+
   
-  
-  
-  
-  def controllDirection(self, positionOfTheLine):
+  def controll_direction(self, positionOfTheLine):
     setpoint = 0.0
     
     # Calculate error
@@ -21,7 +19,7 @@ class Controller:
     
     # P
     Pout = self.Kp * error
-   
+    print '$$$$$$$$$$$$$ Pout: ' + str(Pout)
     
     # I
     self.integral += error * self.Ta;

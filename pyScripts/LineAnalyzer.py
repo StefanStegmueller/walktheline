@@ -2,28 +2,40 @@ import numpy
 import cv2
 import threading
 import time
-from TimeAnalyzer import *
+import TimeAnalyzer
+from SettingsParser import *
 from picamera import PiCamera
 from picamera.array import PiRGBArray
-import io
 
 
 class LineAnalyzer:
-    def __init__(self, camera_x_resolution, camera_y_resolution, pic_format, robot):
-        self.lock = threading.Lock()
-        self.deviation = 0
-        self.camera = PiCamera()
-        self.camera.resolution = (camera_x_resolution, camera_y_resolution)
-        self.camera.framerate = 32
-        self.rawCapture = PiRGBArray(self.camera, size=(camera_x_resolution, camera_y_resolution))
-        self.pic_format = pic_format
-        self.robot = robot
-        self.send_info = False
-        self.on_track = True
-        self.manual_deviation = 0
-        self.wait_for_manual_instruction = True
-        self.tolerance_manual_control = 20
-        self.tolerance_counter = 0
+    def __init__(self):
+        camera_x_resolution = SettingsParser.get_value("camera", "camera_x_resolution")
+        camera_y_resolution = SettingsParser.get_value("camera", "camera_y_resolution")
+        pic_format = SettingsParser.get_value("camera", "pic_format")
+        self.__lock = threading.Lock()
+        self.__camera = PiCamera()
+        self.__camera.resolution = (camera_x_resolution, camera_y_resolution)
+        self.__camera.framerate = 32
+        self.__rawCapture = PiRGBArray(self.__camera, size=(camera_x_resolution, camera_y_resolution))
+        self.__pic_format = pic_format
+        self.__send_info = False
+        self.__on_track = True
+        self.__tolerance_manual_control = 20
+        self.__tolerance_counter = 0
+        self.__middle = 0
+
+    def clear_send_info(self):
+        self.__send_info = False
+
+    def can_send_info(self):
+        return self.__send_info
+
+    def get_middle(self):
+        return self.__middle
+
+    def get_on_track(self):
+        return self.__on_track
 
     # turn image 180 degrees
     def turn_img(self, img):
@@ -67,15 +79,11 @@ class LineAnalyzer:
         return border
 
     def find_center_of_mass(self, img):
-        time_analyzer = TimeAnalyzer("Center of Mass")
-        time_analyzer.start()
         moments = cv2.moments(img, True)
 
         if moments['m00'] == 0:
             return 320
         center = moments['m10'] / moments['m00']
-
-        time_analyzer.stop()
 
         return center
 
@@ -85,43 +93,30 @@ class LineAnalyzer:
     def calculate_roi_height(self, height):
         return height - (height * 0.9)
 
-    def check_on_track(self, thresh):
-        # HitMiss
-        # kernel = numpy.ones((50, 50), numpy.uint8)
-        # hitmiss = cv2.morphologyEx(thresh, cv2.MORPH_HITMISS, kernel)
+    def check_on_track(self, thresh, lowest_brightness_average):
 
         # Genug schwarz?
         brightness_avg = cv2.mean(thresh, mask=None)
 
         # Schwerpunkt Messen
-        if (brightness_avg[0] > 10):
-            self.on_track = True
-            self.wait_for_manual_instruction = False
-            self.tolerance_counter = 0
+        if (brightness_avg[0] > lowest_brightness_average):
+            self.__on_track = True
+            self.__tolerance_counter = 0
             print "Linie erkannt"
-        elif (self.tolerance_counter == self.tolerance_manual_control):
-            self.on_track = False
+        elif (self.__tolerance_counter == self.__tolerance_manual_control):
+            self.__on_track = False
             print "Keine Linie"
         else:
-            self.tolerance_counter += 1
-
-    def set_deviation(self, middle, width):
-        if (self.on_track):
-            self.deviation = middle - (width / 2)
-            self.deviation = numpy.int32(self.deviation).item()  # cast numpy data type to native data type
-            self.deviation = self.deviation / (width / 2.0)
-        else:
-            if (self.wait_for_manual_instruction):
-                self.robot.handbrake()
-            else:
-                self.deviation = self.manual_deviation
+            self.__tolerance_counter += 1
 
     def analyze_pipeline(self):
-        time_analyzer = TimeAnalyzer("Analyze-Thread")
-        for frame in self.camera.capture_continuous(self.rawCapture, format=self.pic_format, use_video_port=True):
+        time_analyzer = TimeAnalyzer.TimeAnalyzer("Analyze-Thread")
+        decrease_from_average_brightness = SettingsParser.get_value("camera", "decrease_from_average_brightness")
+        lowest_brightness_average = SettingsParser.get_value("camera", "lowest_brightness_average")
+        for frame in self.__camera.capture_continuous(self.__rawCapture, format=self.__pic_format, use_video_port=True):
             time_analyzer.start()
             image = frame.array
-            self.rawCapture.truncate(0)
+            self.__rawCapture.truncate(0)
 
             # read greyscale image
             img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -137,9 +132,9 @@ class LineAnalyzer:
             # crop ROI out of given image
             roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
 
-            brightness_limit = cv2.mean(roi, mask=None)[0] - 40
+            brightness_limit = cv2.mean(roi, mask=None)[0] - decrease_from_average_brightness
 
-            ret, thresh = cv2.threshold(roi, 80, 255, cv2.THRESH_BINARY_INV)
+            ret, thresh = cv2.threshold(roi, brightness_limit, 255, cv2.THRESH_BINARY_INV)
 
             # crop white lines of image
             start_x = 1
@@ -151,17 +146,14 @@ class LineAnalyzer:
 
             cv2.imwrite("thresh.jpg", thresh)
 
-            middle = self.find_center_of_mass(thresh)
+            self.__lock.acquire()
 
-            print "@@@@@@@@@Middle: " + str(middle)
+            self.__middle = self.find_center_of_mass(thresh)
 
-            self.check_on_track(thresh)
+            self.check_on_track(thresh, lowest_brightness_average)
 
-            self.lock.acquire()
-            self.set_deviation(middle, width)
-            print "@@@@@@@@@Deviation: " + str(self.deviation)
-            if not(self.wait_for_manual_instruction):
-                self.robot.correct_deviation(self.deviation, self.on_track)
-            self.lock.release()
+            self.__lock.release()
+
             time_analyzer.stop()
-            self.send_info = True
+
+            self.__send_info = True

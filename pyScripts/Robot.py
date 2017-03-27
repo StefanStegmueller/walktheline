@@ -1,6 +1,6 @@
 import numpy
+from SettingsParser import *
 from BrickPi import *  # import BrickPi.py file to use BrickPi operations
-from Controller import *
 
 # This class is an abstract representation of a Robot, consisting of sensors and actors
 class Robot:
@@ -9,8 +9,7 @@ class Robot:
     def __init__(self):
         self.motors = []
         self.sensors = []
-        self.standard_motor_power = 0
-        self.controller = Controller()
+        self.standard_motor_power = SettingsParser.get_value("robot", "standard_motor_power")
 
     def set_motors(self, motor_list):
         self.motors = motor_list
@@ -71,11 +70,13 @@ class Robot:
             BrickPiUpdateValues()
             time.sleep(0.1)
 
-    def correct_deviation(self, deviation, use_controller):
-        if(use_controller):
-            deviation = self.controller.controllDirection(deviation)
+    def correct_deviation(self, deviation):
         curve_speed_factor = 0.4
-        print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@qqq@@@Regler: " + str(deviation)
+
+        if(deviation == -2):
+            self.handbrake()
+            return
+
         if(deviation <= 0):
             self.set_motor_power("right",self.standard_motor_power + self.standard_motor_power * deviation * curve_speed_factor)
         else:

@@ -5,9 +5,12 @@
     "camera":{
         "camera_x_resolution":640,
         "camera_y_resolution":480,
-        "pic_format":"bgr"
+        "pic_format":"bgr",
+        "decrease_from_average_brightness":40,
+        "lowest_brightness_average":10
     },
-    "threads":{
-        "main_thread_sleep_seconds":0.1
+    "server":{
+        "url":"http://192.168.0.101/upload.php",
+        "file_to_upload":"thresh.jpg"
     }
 }
