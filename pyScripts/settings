@@ -1,12 +1,13 @@
 {
     "robot":{
-        "standard_motor_power":150
+        "standard_motor_power":180,
+	"manual_motor_power":255
     },
     "camera":{
         "camera_x_resolution":640,
         "camera_y_resolution":480,
         "pic_format":"bgr",
-        "decrease_from_average_brightness":40,
+        "factor_for_average_brightness":0.5,
         "lowest_brightness_average":10,
         "tolerance_manual_controll":5
     },

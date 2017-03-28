@@ -72,7 +72,7 @@ class Robot:
 
     def correct_deviation(self, deviation):
         curve_speed_factor = 0.4
-
+	print "+++++++++++++++++++++++++++++Deviation: " + str(deviation)
         if(deviation == -2):
             self.handbrake()
             return

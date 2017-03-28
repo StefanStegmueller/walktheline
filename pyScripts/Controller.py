@@ -13,6 +13,8 @@ class Controller:
         self.__robot = Robot.Robot()
         self.initialize_robot()
         self.__auto_controller = AutoController.AutoController()
+        self.__standard_motor_power = SettingsParser.get_value("robot", "standard_motor_power")
+        self.__manual_motor_power = SettingsParser.get_value("robot", "manual_motor_power")
 
     def get_deviaton(self):
         return self.__deviation
@@ -37,14 +39,16 @@ class Controller:
     def controll_robot(self, middle, on_track, manual_direction):
         width = SettingsParser.get_value("camera", "camera_x_resolution")
         self.set_deviation(middle, width, on_track, manual_direction)
-        self.__robot.correct_deviation(self.deviation)
+        self.__robot.correct_deviation(self.__deviation)
 
-    def set_deviation(self, middle, width, on_track, manual_direction):
+    def set_deviation(self, middle, width, on_track, manual_direction): 
         if (on_track):
+            self.__robot.standard_motor_power = self.__standard_motor_power
             self.__deviation = middle - (width / 2)
-            self.__deviation = numpy.int32(self.deviation).item()  # cast numpy data type to native data type
-            self.__deviation = self.deviation / (width / 2.0)
+            self.__deviation = numpy.int32(self.__deviation).item()  # cast numpy data type to native data type
+            self.__deviation = self.__deviation / (width / 2.0)
             self.__deviation = self.__auto_controller.controll_direction(self.__deviation)
         else:
-            self.deviation = manual_direction
+            self.__deviation = manual_direction
+            self.__robot.standard_motor_power = self.__manual_motor_power
 

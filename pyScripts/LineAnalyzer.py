@@ -111,7 +111,7 @@ class LineAnalyzer:
 
     def analyze_pipeline(self):
         time_analyzer = TimeAnalyzer.TimeAnalyzer("Analyze-Thread")
-        decrease_from_average_brightness = SettingsParser.get_value("camera", "decrease_from_average_brightness")
+        factor_for_average_brightness = SettingsParser.get_value("camera", "factor_for_average_brightness")
         lowest_brightness_average = SettingsParser.get_value("camera", "lowest_brightness_average")
         for frame in self.__camera.capture_continuous(self.__rawCapture, format=self.__pic_format, use_video_port=True):
             time_analyzer.start()
@@ -132,7 +132,7 @@ class LineAnalyzer:
             # crop ROI out of given image
             roi = self.crop_roi(img, start_x, start_y, new_w, new_h)
 
-            brightness_limit = cv2.mean(roi, mask=None)[0] - decrease_from_average_brightness
+            brightness_limit = cv2.mean(roi, mask=None)[0] * factor_for_average_brightness
 
             ret, thresh = cv2.threshold(roi, brightness_limit, 255, cv2.THRESH_BINARY_INV)
 

@@ -35,16 +35,18 @@ class LineWalker:
         url = SettingsParser.get_value("server", "url")
         file = SettingsParser.get_value("server", "file_to_upload")
 
+        manual_direction = -2
+
         # main loop
         while True:
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
             if (self.line_analyzer.can_send_info()):
                 path_position = self.controller.get_deviaton()
                 manual_direction = self.communicate_to_server(roi_position, roi_height, path_position, url, file)
-                self.controller.controll_robot(self.line_analyzer.get_middle(),
-                                               self.line_analyzer.get_on_track(),
-                                               manual_direction)
                 self.line_analyzer.clear_send_info()
+            self.controller.controll_robot(self.line_analyzer.get_middle(),
+                   self.line_analyzer.get_on_track,
+                   manual_direction)
 
 
     def start_new_analyze_worker(self):
