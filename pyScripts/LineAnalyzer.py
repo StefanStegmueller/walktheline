@@ -9,7 +9,7 @@ from picamera.array import PiRGBArray
 
 
 class LineAnalyzer:
-    def __init__(self,):
+    def __init__(self):
         camera_x_resolution = SettingsParser.get_value("camera", "camera_x_resolution")
         camera_y_resolution = SettingsParser.get_value("camera", "camera_y_resolution")
         pic_format = SettingsParser.get_value("camera", "pic_format")
