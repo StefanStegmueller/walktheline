@@ -9,7 +9,7 @@
         "pic_format":"bgr",
         "factor_for_average_brightness":0.5,
         "lowest_brightness_average":10,
-        "tolerance_manual_controll":5
+        "tolerance_manual_control":5
     },
     "server":{
         "url":"http://192.168.0.101/upload.php",

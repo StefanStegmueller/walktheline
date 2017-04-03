@@ -7,31 +7,34 @@ class Robot:
     """This class is an abstract representation of a Robot, consisting of sensors and actors"""
 
     def __init__(self):
-        self.motors = []
-        self.sensors = []
-        self.standard_motor_power = SettingsParser.get_value("robot", "standard_motor_power")
+        self.__motors = []
+        self.__sensors = []
+        self.__standard_motor_power = SettingsParser.get_value("robot", "standard_motor_power")
 
     def set_motors(self, motor_list):
-        self.motors = motor_list
+        self.__motors = motor_list
 
     def set_sensors(self, sensor_list):
-        self.sensors = sensor_list
+        self.__sensors = sensor_list
+
+    def set_standard_motor_power(self, power):
+        self.__standard_motor_power = power
 
     def set_motor_power(self, position, motor_power_level):
         motor_power_level = numpy.int32(motor_power_level).item()
-        for each_motor in self.motors:
-            if each_motor.position == position:
+        for each_motor in self.__motors:
+            if each_motor.get_position() == position:
                 each_motor.set_power(motor_power_level)
 
     def get_motor_power(self, position):
-        for each_motor in self.motors:
-            if each_motor.position == position:
+        for each_motor in self.__motors:
+            if each_motor.get_position() == position:
                 each_motor.get_power()
 
     def set_both_motor_powers(self, motor_power_level):
         motor_power_level = numpy.int32(motor_power_level).item()
-        for each_motor in self.motors:
-            BrickPi.MotorSpeed[each_motor.port] = motor_power_level
+        for each_motor in self.__motors:
+            BrickPi.MotorSpeed[each_motor.get_port()] = motor_power_level
 
     def drive_backwards(self, seconds, motor_power_level):
         """Let the robot drive backwards for a given amount of seconds"""
@@ -72,20 +75,20 @@ class Robot:
 
     def correct_deviation(self, deviation):
         curve_speed_factor = 0.4
-	print "+++++++++++++++++++++++++++++Deviation: " + str(deviation)
+        print "+++++++++++++++++++++++++++++Deviation: " + str(deviation)
         if(deviation == -2):
             self.handbrake()
             return
 
         if(deviation <= 0):
-            self.set_motor_power("right",self.standard_motor_power + self.standard_motor_power * deviation * curve_speed_factor)
+            self.set_motor_power("right", self.__standard_motor_power + self.__standard_motor_power * deviation * curve_speed_factor)
         else:
-            self.set_motor_power("right",self.standard_motor_power - (deviation * self.standard_motor_power))
+            self.set_motor_power("right", self.__standard_motor_power - (deviation * self.__standard_motor_power))
 
 
         if(deviation >= 0):
-            self.set_motor_power("left",self.standard_motor_power - self.standard_motor_power * deviation * curve_speed_factor)
+            self.set_motor_power("left", self.__standard_motor_power - self.__standard_motor_power * deviation * curve_speed_factor)
         else:
-            self.set_motor_power("left",self.standard_motor_power + (deviation * self.standard_motor_power))
+            self.set_motor_power("left", self.__standard_motor_power + (deviation * self.__standard_motor_power))
 	
 

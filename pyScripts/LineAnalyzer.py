@@ -9,7 +9,7 @@ from picamera.array import PiRGBArray
 
 
 class LineAnalyzer:
-    def __init__(self):
+    def __init__(self,):
         camera_x_resolution = SettingsParser.get_value("camera", "camera_x_resolution")
         camera_y_resolution = SettingsParser.get_value("camera", "camera_y_resolution")
         pic_format = SettingsParser.get_value("camera", "pic_format")
@@ -21,8 +21,6 @@ class LineAnalyzer:
         self.__pic_format = pic_format
         self.__send_info = False
         self.__on_track = True
-        self.__tolerance_manual_controll = SettingsParser.get_value("camera", "tolerance_manual_controll")
-        self.__tolerance_counter = 0
         self.__middle = 0
 
     def clear_send_info(self):
@@ -101,13 +99,10 @@ class LineAnalyzer:
         # Schwerpunkt Messen
         if (brightness_avg[0] > lowest_brightness_average):
             self.__on_track = True
-            self.__tolerance_counter = 0
             print "Linie erkannt"
-        elif (self.__tolerance_counter == self.__tolerance_manual_controll):
+        else:
             self.__on_track = False
             print "Keine Linie"
-        else:
-            self.__tolerance_counter += 1
 
     def analyze_pipeline(self):
         time_analyzer = TimeAnalyzer.TimeAnalyzer("Analyze-Thread")

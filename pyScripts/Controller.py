@@ -8,13 +8,16 @@ import Motor
 class Controller:
 
     def __init__(self):
-        self.__deviation = 0
         self.initialize_brick_pi()
         self.__robot = Robot.Robot()
         self.initialize_robot()
         self.__auto_controller = AutoController.AutoController()
         self.__standard_motor_power = SettingsParser.get_value("robot", "standard_motor_power")
         self.__manual_motor_power = SettingsParser.get_value("robot", "manual_motor_power")
+        self.__width = SettingsParser.get_value("camera", "camera_x_resolution")
+        self.__tolerance_manual_control = SettingsParser.get_value("camera", "tolerance_manual_control")
+        self.__tolerance_counter = 0
+        self.__deviation
 
     def get_deviaton(self):
         return self.__deviation
@@ -37,18 +40,22 @@ class Controller:
         # There's often a long wait for setup with the EV3 sensors.  Up to 5 seconds.
 
     def controll_robot(self, middle, on_track, manual_direction):
-        width = SettingsParser.get_value("camera", "camera_x_resolution")
-        self.set_deviation(middle, width, on_track, manual_direction)
-        self.__robot.correct_deviation(self.__deviation)
+        deviation = self.set_deviation(middle, on_track, manual_direction)
+        self.__robot.correct_deviation(deviation)
 
-    def set_deviation(self, middle, width, on_track, manual_direction): 
+    def set_deviation(self, middle, on_track, manual_direction):
         if (on_track):
-            self.__robot.standard_motor_power = self.__standard_motor_power
-            self.__deviation = middle - (width / 2)
-            self.__deviation = numpy.int32(self.__deviation).item()  # cast numpy data type to native data type
-            self.__deviation = self.__deviation / (width / 2.0)
-            self.__deviation = self.__auto_controller.controll_direction(self.__deviation)
+            self.__robot.set_standard_motor_power(self.__standard_motor_power)
+            deviation = middle - (self.__width / 2)
+            deviation = numpy.int32(deviation).item()  # cast numpy data type to native data type
+            deviation = deviation / (self.__width / 2.0)
+            self.__deviation = deviation
+            self.__tolerance_counter = 0
+            return self.__auto_controller.controll_direction(deviation)
+        elif(self.__tolerance_counter >= self.__tolerance_manual_control):
+            self.__robot.set_standard_motor_power(self.__manual_motor_power)
+            return manual_direction
         else:
-            self.__deviation = manual_direction
-            self.__robot.standard_motor_power = self.__manual_motor_power
+            self.__tolerance_counter += 1
+            return self.__auto_controller.controll_direction(self.__deviation)
 

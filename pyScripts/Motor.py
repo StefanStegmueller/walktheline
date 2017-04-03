@@ -6,11 +6,17 @@ class Motor:
     """This class is an abstract representation of a motor engine"""
 
     def __init__(self, port, position):
-        self.port = port
-        self.position = position
+        self.__port = port
+        self.__position = position
+
+    def get_position(self):
+        return self.__position
+
+    def get_port(self):
+        return self.__port
 
     def set_power(self, level):
-        BrickPi.MotorSpeed[self.port] = level
+        BrickPi.MotorSpeed[self.__port] = level
 
     def get_power(self):
-        return BrickPi.MotorSpeed[self.port]
+        return BrickPi.MotorSpeed[self.__port]
