@@ -1,17 +1,18 @@
+from threading import Thread
+
+import Controller
+import HttpService
+import LineAnalyzer
 from BrickPi import *
 from SettingsParser import *
-import TimeAnalyzer
-import HttpService
-import Controller
-import LineAnalyzer
-from threading import Thread
+
 
 class LineWalker:
     def __init__(self):
         """This method initializes and starts the whole software"""
         # Start worker processes for pattern detection
-        self.line_analyzer = LineAnalyzer.LineAnalyzer()
-        self.controller = Controller.Controller()
+        self.__line_analyzer = LineAnalyzer.LineAnalyzer()
+        self.__controller = Controller.Controller()
         self.main(self)
 
     def communicate_to_server(self, roi_position, roi_height, path_position, url, file):
@@ -29,8 +30,8 @@ class LineWalker:
         # Starting threads
         self.start_new_analyze_worker()
 
-        roi_position = self.line_analyzer.calculate_roi_start_height(SettingsParser.get_value("camera", "camera_x_resolution"))
-        roi_height = self.line_analyzer.calculate_roi_height(SettingsParser.get_value("camera", "camera_x_resolution"))
+        roi_position = self.__line_analyzer.calculate_roi_start_height(SettingsParser.get_value("camera", "camera_x_resolution"))
+        roi_height = self.__line_analyzer.calculate_roi_height(SettingsParser.get_value("camera", "camera_x_resolution"))
 
         url = SettingsParser.get_value("server", "url")
         file = SettingsParser.get_value("server", "file_to_upload")
@@ -40,18 +41,18 @@ class LineWalker:
         # main loop
         while True:
             result = BrickPiUpdateValues()  # Ask BrickPi to update values for sensors/motors
-            if (self.line_analyzer.can_send_info()):
-                path_position = self.controller.get_deviaton()
+            if (self.__line_analyzer.can_send_info()):
+                path_position = self.__controller.get_deviaton()
                 manual_direction = self.communicate_to_server(roi_position, roi_height, path_position, url, file)
-                self.line_analyzer.clear_send_info()
-            self.controller.controll_robot(self.line_analyzer.get_middle(),
-                   self.line_analyzer.get_on_track,
+                self.__line_analyzer.clear_send_info()
+            self.__controller.controll_robot(self.__line_analyzer.get_middle(),
+                   self.__line_analyzer.get_on_track,
                    manual_direction)
 
 
     def start_new_analyze_worker(self):
         print "Starting new analyze worker"
-        line_detection_thread = Thread(target=self.line_analyzer.analyze_pipeline)
+        line_detection_thread = Thread(target=self.__line_analyzer.analyze_pipeline)
         line_detection_thread.daemon = True
         line_detection_thread.start()
 

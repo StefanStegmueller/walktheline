@@ -1,14 +1,14 @@
 class AutoController:
 
   def __init__(self):
-    self.Ta = 0.09     #Abstastzeit
-    self.max = 1.0
-    self.min = -1.0
-    self.Kp = 1.5    #1.5
-    self.Ki = 0.2   #0.2
-    self.Kd = self.Ki * 0.1
-    self.pre_error = 0.0
-    self.integral = 0.0
+    self.__ta = 0.09     #Abstastzeit
+    self.__max = 1.0
+    self.__min = -1.0
+    self.__kp = 1.5    #1.5
+    self.__ki = 0.2   #0.2
+    self.__kd = self.__ki * 0.1
+    self.__pre_error = 0.0
+    self.__integral = 0.0
 
   
   def controll_direction(self, positionOfTheLine):
@@ -18,17 +18,17 @@ class AutoController:
     error = setpoint + positionOfTheLine
     
     # P
-    Pout = self.Kp * error
+    Pout = self.__kp * error
     print '$$$$$$$$$$$$$ Pout: ' + str(Pout)
     
     # I
-    self.integral += error * self.Ta;
-    Iout = self.Ki * self.integral;
+    self.__integral += error * self.__ta;
+    Iout = self.__ki * self.__integral;
     print '$$$$$$$$$$$$$ Iout: ' + str(Iout)
     
     # D
-    derivative = (self.pre_error - error) / self.Ta;
-    Dout = self.Kd * derivative;
+    derivative = (self.__pre_error - error) / self.__ta;
+    Dout = self.__kd * derivative;
     print '$$$$$$$$$$$$$ Dout: ' + str(Dout)
     
     
@@ -36,13 +36,13 @@ class AutoController:
     output = Pout + Iout + Dout
     print '$$$$$$$$$$$$$ output: ' + str(output)
     
-    if output > self.max:
-      output = self.max
-    elif output < self.min:
-      output = self.min
+    if output > self.__max:
+      output = self.__max
+    elif output < self.__min:
+      output = self.__min
     
   
     # Save error to previous error
-    self.pre_error = error;
+    self.__pre_error = error;
 
     return output;

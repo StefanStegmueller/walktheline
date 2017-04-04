@@ -1,9 +1,11 @@
 import numpy
+
 import AutoController
-from SettingsParser import *
-from BrickPi import *
-import Robot
 import Motor
+import Robot
+from BrickPi import *
+from SettingsParser import *
+
 
 class Controller:
 

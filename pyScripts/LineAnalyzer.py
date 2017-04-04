@@ -1,11 +1,11 @@
-import numpy
-import cv2
 import threading
-import time
-import TimeAnalyzer
-from SettingsParser import *
+
+import cv2
 from picamera import PiCamera
 from picamera.array import PiRGBArray
+
+import TimeAnalyzer
+from SettingsParser import *
 
 
 class LineAnalyzer:
