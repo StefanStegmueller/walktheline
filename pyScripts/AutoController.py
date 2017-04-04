@@ -1,12 +1,14 @@
+import SettingsParser
+
 class AutoController:
 
   def __init__(self):
-    self.__ta = 0.09     #Abstastzeit
-    self.__max = 1.0
-    self.__min = -1.0
-    self.__kp = 1.5    #1.5
-    self.__ki = 0.2   #0.2
-    self.__kd = self.__ki * 0.1
+    self.__ta = SettingsParser.get_value("controller", "ta")   #Abstastzeit
+    self.__max = SettingsParser.get_value("controller", "min")
+    self.__min = SettingsParser.get_value("controller", "max")
+    self.__kp = SettingsParser.get_value("controller", "kp")
+    self.__ki = SettingsParser.get_value("controller", "ki")
+    self.__kd = self.__ki * SettingsParser.get_value("controller", "kd_factor")
     self.__pre_error = 0.0
     self.__integral = 0.0
 

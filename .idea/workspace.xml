@@ -4,13 +4,6 @@
     <list default="true" id="36314fbd-45e6-474c-9370-b745804a7cbc" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/AutoController.py" afterPath="$PROJECT_DIR$/pyScripts/AutoController.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/BrickPi.py" afterPath="$PROJECT_DIR$/pyScripts/BrickPi.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/Controller.py" afterPath="$PROJECT_DIR$/pyScripts/Controller.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/LineAnalyzer.py" afterPath="$PROJECT_DIR$/pyScripts/LineAnalyzer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/LineWalker.py" afterPath="$PROJECT_DIR$/pyScripts/LineWalker.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/Motor.py" afterPath="$PROJECT_DIR$/pyScripts/Motor.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/Robot.py" afterPath="$PROJECT_DIR$/pyScripts/Robot.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/TestLineAnalyzer.py" afterPath="$PROJECT_DIR$/pyScripts/TestLineAnalyzer.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyScripts/settings" afterPath="$PROJECT_DIR$/pyScripts/settings" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,6 +16,26 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="settings" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/pyScripts/settings">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="432">
+                    <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="walktheline" />
@@ -32,48 +45,18 @@
       <file leaf-file-name="LineWalker.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyScripts/LineWalker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-270">
-              <caret line="6" column="28" lean-forward="true" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
+            <state relative-caret-position="0">
+              <caret line="6" column="28" lean-forward="false" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Python/#/home/stefan/Dev/walktheline/walktheline" pinned="false" current-in-tab="false">
-        <entry file="uml://Python/#/home/stefan/Dev/walktheline/walktheline">
-          <provider selected="true" editor-type-id="UmlEditorProvider">
-            <state>
-              <ID>Python</ID>
-              <OriginalElement>#/home/stefan/Dev/walktheline/walktheline</OriginalElement>
-              <nodes>
-                <node x="791.7857142857142" y="655.1428571428575">pyScripts.LineWalker.LineWalker</node>
-                <node x="364.5" y="1068.0">pyScripts.HttpService.HttpService</node>
-                <node x="0.0" y="654.0">pyScripts.Controller.Controller</node>
-                <node x="0.0" y="0.0">pyScripts.LineAnalyzer.LineAnalyzer</node>
-                <node x="661.0" y="1069.4285714285716">pyScripts.SettingsParser.SettingsParser</node>
-                <node x="9.5" y="1068.0">pyScripts.TimeAnalyzer.TimeAnalyzer</node>
-                <node x="429.2142857142858" y="653.9999999999999">pyScripts.AutoController.AutoController</node>
-                <node x="647.0" y="415.4285714285715">pyScripts.Motor.Motor</node>
-                <node x="648.0" y="0.0">pyScripts.Robot.Robot</node>
-              </nodes>
-              <notes />
-              <edges />
-              <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="-441.14285714285717" y="292.85714285714283" />
-              <SelectedNodes />
-              <Categories>
-                <Category>Methods</Category>
-                <Category>Inner Classes</Category>
-                <Category>Fields</Category>
-              </Categories>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AutoController.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="AutoController.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pyScripts/AutoController.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="17" column="40" lean-forward="true" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
+            <state relative-caret-position="324">
+              <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -82,18 +65,8 @@
       <file leaf-file-name="Controller.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyScripts/Controller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="738">
+            <state relative-caret-position="756">
               <caret line="48" column="22" lean-forward="false" selection-start-line="48" selection-start-column="22" selection-end-line="48" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HttpService.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pyScripts/HttpService.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="9" lean-forward="false" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -115,17 +88,17 @@
         <entry file="file://$PROJECT_DIR$/pyScripts/Robot.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="612">
-              <caret line="36" column="73" lean-forward="true" selection-start-line="36" selection-start-column="73" selection-end-line="36" selection-end-column="73" />
+              <caret line="36" column="73" lean-forward="false" selection-start-line="36" selection-start-column="73" selection-end-line="36" selection-end-column="73" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TimeAnalyzer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TimeAnalyzer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyScripts/TimeAnalyzer.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="306">
-              <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -181,7 +154,6 @@
         <option value="$PROJECT_DIR$/pyScripts/Observable.py" />
         <option value="$PROJECT_DIR$/pyScripts/Publisher.py" />
         <option value="$PROJECT_DIR$/pyScripts/AnalysisOutput.py" />
-        <option value="$PROJECT_DIR$/pyScripts/settings" />
         <option value="$PROJECT_DIR$/pyScripts/Controller.py" />
         <option value="$PROJECT_DIR$/pyScripts/Motor.py" />
         <option value="$PROJECT_DIR$/pyScripts/Robot.py" />
@@ -189,6 +161,9 @@
         <option value="$PROJECT_DIR$/pyScripts/LineAnalyzer.py" />
         <option value="$PROJECT_DIR$/walktheline/AutoController.py" />
         <option value="$PROJECT_DIR$/walktheline/LineWalker.py" />
+        <option value="$PROJECT_DIR$/pyScripts/__init__.py" />
+        <option value="$PROJECT_DIR$/pyScripts/AutoController.py" />
+        <option value="$PROJECT_DIR$/pyScripts/settings" />
       </list>
     </option>
   </component>
@@ -200,7 +175,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="24" />
-    <option name="width" value="1920" />
+    <option name="width" value="960" />
     <option name="height" value="1032" />
   </component>
   <component name="ProjectView">
@@ -218,6 +193,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -246,8 +223,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -498,9 +473,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="24" width="1920" height="1032" extended-state="0" />
+    <frame x="0" y="24" width="960" height="1032" extended-state="4" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16110532" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32254696" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16684607" sideWeight="0.31770834" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -574,21 +550,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="901">
-          <caret line="53" column="7" lean-forward="false" selection-start-line="53" selection-start-column="7" selection-end-line="53" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LineAnalyzer.py" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/LineAnalyzer.py" />
     <entry file="file://$PROJECT_DIR$/OpenCVTest.py" />
     <entry file="file://$PROJECT_DIR$/OpenCVTest.py" />
@@ -619,7 +580,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="11" column="40" lean-forward="false" selection-start-line="11" selection-start-column="40" selection-end-line="11" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -749,20 +709,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyScripts/Publisher.py" />
     <entry file="file://$PROJECT_DIR$/pyScripts/AnalysisOutput.py" />
-    <entry file="file://$PROJECT_DIR$/pyScripts/settings">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="33" lean-forward="false" selection-start-line="11" selection-start-column="33" selection-end-line="11" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pyScripts/TestLineAnalyzer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1692">
@@ -790,14 +741,14 @@
     <entry file="file://$PROJECT_DIR$/pyScripts/Robot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
-          <caret line="36" column="73" lean-forward="true" selection-start-line="36" selection-start-column="73" selection-end-line="36" selection-end-column="73" />
+          <caret line="36" column="73" lean-forward="false" selection-start-line="36" selection-start-column="73" selection-end-line="36" selection-end-column="73" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pyScripts/Controller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="738">
+        <state relative-caret-position="756">
           <caret line="48" column="22" lean-forward="false" selection-start-line="48" selection-start-column="22" selection-end-line="48" selection-end-column="22" />
           <folding />
         </state>
@@ -813,30 +764,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/walktheline/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyScripts/AutoController.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="17" column="40" lean-forward="true" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pyScripts/LineWalker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-270">
-          <caret line="6" column="28" lean-forward="true" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/walktheline/__init__.py" />
     <entry file="uml://Python/#/home/stefan/Dev/walktheline/walktheline">
       <provider selected="true" editor-type-id="UmlEditorProvider">
         <state>
@@ -855,13 +783,14 @@
           </nodes>
           <notes />
           <edges />
-          <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="-441.14285714285717" y="292.85714285714283" />
+          <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="-441.0" y="293.0" />
           <SelectedNodes />
           <Categories>
-            <Category>Methods</Category>
-            <Category>Inner Classes</Category>
             <Category>Fields</Category>
+            <Category>Inner Classes</Category>
+            <Category>Methods</Category>
           </Categories>
+          <SCOPE>All</SCOPE>
         </state>
       </provider>
     </entry>
@@ -873,10 +802,81 @@
         </state>
       </provider>
     </entry>
+    <entry file="uml://JavaScript-modules-diagram//home/stefan/Dev/walktheline/pyScripts">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$/pyScripts</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="805.0" y="436.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <SCOPE>All</SCOPE>
+          <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyScripts/__init__.py" />
+    <entry file="uml://Python/#/home/stefan/Dev/walktheline/pyScripts">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>Python</ID>
+          <OriginalElement>#/home/stefan/Dev/walktheline/pyScripts</OriginalElement>
+          <nodes>
+            <node x="" y="">pyScripts.TestLineAnalyzer.LineAnalyzer</node>
+            <node x="" y="">pyScripts.LineAnalyzer.LineAnalyzer</node>
+            <node x="" y="">pyScripts.Robot.Robot</node>
+            <node x="" y="">pyScripts.LineWalker.LineWalker</node>
+            <node x="" y="">pyScripts.Motor.Motor</node>
+            <node x="" y="">pyScripts.Controller.Controller</node>
+            <node x="" y="">pyScripts.SettingsParser.SettingsParser</node>
+            <node x="" y="">pyScripts.HttpService.HttpService</node>
+            <node x="" y="">pyScripts.AutoController.AutoController</node>
+          </nodes>
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="0.7000000000000001" x="998.4285714285713" y="918.2857142857142" />
+          <SelectedNodes />
+          <Categories>
+            <Category>Fields</Category>
+            <Category>Inner Classes</Category>
+            <Category>Methods</Category>
+          </Categories>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pyScripts/TimeAnalyzer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
-          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyScripts/LineWalker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="6" column="28" lean-forward="false" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyScripts/settings">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyScripts/AutoController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
           <folding />
         </state>
       </provider>
