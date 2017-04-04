@@ -10,7 +10,6 @@ from SettingsParser import *
 class LineWalker:
     def __init__(self):
         """This method initializes and starts the whole software"""
-        # Start worker processes for pattern detection
         self.__line_analyzer = LineAnalyzer.LineAnalyzer()
         self.__controller = Controller.Controller()
         self.main(self)
@@ -36,6 +35,11 @@ class LineWalker:
         url = SettingsParser.get_value("server", "url")
         file = SettingsParser.get_value("server", "file_to_upload")
 
+        self.run(roi_position, roi_height, url, file)
+        
+
+    def run(self, roi_position, roi_height, url, file):
+
         manual_direction = -2
 
         # main loop
@@ -48,7 +52,6 @@ class LineWalker:
             self.__controller.controll_robot(self.__line_analyzer.get_middle(),
                    self.__line_analyzer.get_on_track,
                    manual_direction)
-
 
     def start_new_analyze_worker(self):
         print "Starting new analyze worker"

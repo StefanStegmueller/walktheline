@@ -1,15 +1,32 @@
 import numpy
 from SettingsParser import *
 from BrickPi import *  # import BrickPi.py file to use BrickPi operations
+import Motor
 
 # This class is an abstract representation of a Robot, consisting of sensors and actors
 class Robot:
     """This class is an abstract representation of a Robot, consisting of sensors and actors"""
 
     def __init__(self):
+        self.initialize_brick_pi()
         self.__motors = []
         self.__sensors = []
         self.__standard_motor_power = SettingsParser.get_value("robot", "standard_motor_power")
+        right_motor = Motor.Motor(PORT_B, "right")
+        left_motor = Motor.Motor(PORT_C, "left")
+        self.set_motors([left_motor, right_motor])
+
+    @staticmethod
+    def initialize_brick_pi():
+        # setup the serial port for communication
+        BrickPiSetup()
+
+        BrickPi.MotorEnable[PORT_B] = 1  # Enable the Motor B
+        BrickPi.MotorEnable[PORT_C] = 1  # Enable the Motor A
+
+        # Send the properties of sensors to BrickPi. Set up the BrickPi
+        BrickPiSetupSensors()
+        # There's often a long wait for setup with the EV3 sensors.  Up to 5 seconds.
 
     def set_motors(self, motor_list):
         self.__motors = motor_list
