@@ -24,10 +24,6 @@ class Robot:
         BrickPi.MotorEnable[PORT_B] = 1  # Enable the Motor B
         BrickPi.MotorEnable[PORT_C] = 1  # Enable the Motor A
 
-        # Send the properties of sensors to BrickPi. Set up the BrickPi
-        BrickPiSetupSensors()
-        # There's often a long wait for setup with the EV3 sensors.  Up to 5 seconds.
-
     def set_motors(self, motor_list):
         self.__motors = motor_list
 
